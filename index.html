@@ -11,7 +11,7 @@
 
 
 	<p style="font-size: 15px; color: yellow;">⚠️Copyright Disclaimer⚠️:
- 	All content posted here and on the other pages is copyrighted.</p><a href="email.html"><button style="background-color: pink; color: darkcoral;" >My Email</button></a>
+ 	All content posted here (except for the gif's) and on the other pages is copyrighted.</p><a href="email.html"><button style="background-color: pink; color: darkcoral;" >My Email</button></a>
 
 	<h1 style="font-family: Georgia; color: white;"><b>Hello everyone, welcome to this site. I hope you will enjoy staying here, reading, watching, playing, listening to music and learning new things.</b></h1>
 
@@ -23,7 +23,7 @@
 
 
 
-	<a href="AboutMe.html"><button style="background-color: black; color: green; border-radius: 30px;" class="button">&nbsp;&nbsp;&nbsp;About Me + My Blog&nbsp;&nbsp;&nbsp;</button></a> <!-- Qua andiamo a definire la classe, in modo da poter usare la classe per darli una funzione con css sotto -->
+	<a href="AboutMe.html"><button style="background-color: black; color: green; border-radius: 30px;" class="button">&nbsp;&nbsp;&nbsp;Enter Site&nbsp;&nbsp;&nbsp;</button></a> <!-- Qua andiamo a definire la classe, in modo da poter usare la classe per darli una funzione con css sotto -->
 		
     <style>
                 button:hover {      /*  Questo fa si che diventi la manina quando va sopra il pulsante */
@@ -54,13 +54,7 @@
 
 
 
-<!-- style="border-radius:25px; serve per far si che il pulsante si arrotondisca -->
-	
 
-<!-- &nbsp; questa linea fa si che tu possa spostare a tuo piacimento i pulsanti, praticamete crea degli spazi invisibili i quali spostano il pulsante fino a dove te vuoi -->
-
-
-		<!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
 
 
 
@@ -155,5 +149,93 @@ Garamond (serif)
 Courier New (monospace) 
 Brush Script MT (cursive)
 Comic Sans 
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Mettere un testo nell'angolo a destra di un immagine + indentazione giusta dell'immagine la queale vuoi fare questa cosa.
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Come usare il <td valign="top">. Questa stringa di farà vedere come far andare un immagine in questo modo:
+
+
+┌───────────────┐  TITOLO
+│               │
+│   IMMAGINE    │
+│               │
+│               │
+└───────────────┘
+
+
+
+    <table>
+    <tr>
+        <td valign="top">
+
+    <img style="border: 5px solid white" draggable="false" src="images/cat texting.gif"></td>
+
+    <td valign="top">
+
+    <h1 style="font-family: Georgia; color: white;"><b>Hi to all, here you will find all my Reply to you'r questions!</b></h1>
+
+</td>
+
+
+molto utile, prendi esempio da questo in caso te lo scordi
+
+
+style="border-radius:25px; serve per far si che il pulsante si arrotondisca
+    
+
+&nbsp; questa linea fa si che tu possa spostare a tuo piacimento i pulsanti, praticamete crea degli spazi invisibili i quali spostano il pulsante fino a dove te vuoi
+
+
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+////////////////////////////////////////////////////////////////////////////////////
+Come mettere il titolo di una pagina, titole visibile grosso e varie diminesioni
+////////////////////////////////////////////////////////////////////////////////////
+
+All'inizio del codice quando inizi così:
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        Davide's Site
+    </title>
+</head>
+<body style="background-image: url('images/background1.png');">
+
+su title metti il nome del sito
+
+poi sotto a bodi inizia metter gli  
+
+<h1> Titolo piu grosso </h1>
+<h2>mediamente piu grosso</h2>
+<h3>ancora piu piccolo</h3>
+
+<p> testo normale + a capo</p>
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+Come mettere un background:
+///////////////////////////////////////////////////////////////////////////////////
+
+Per mettere un bvackgorund su body style, devi fare in quel modo e dire sia in che cartella è l'immagine "se è nello stesso posto insieme all'html non devi farlo" e poi sia il nome dell'imagine sia lestensione, guarda sotto per capire.:
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        Davide's Site
+    </title>
+</head>
+<body style="background-image: url('images/background1.png');">
+
 
 -->
