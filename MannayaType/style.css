@@ -1,0 +1,38 @@
+body {
+    background: #0b3826;
+    color: #47d69c;
+    font-family: Arial;
+    margin: 40px;
+}
+
+
+#text {
+    font-size: 32px;
+    line-height: 1.8;
+}
+
+
+.c {
+    color: #5dffbe;
+}
+
+
+.w {
+    color: #ff5f5f;
+}
+
+
+.p {
+    color: #666;
+}
+
+
+.cur {
+    background: #e2b714;
+    color: #000;
+}
+
+
+.hide {
+    display: none;
+}

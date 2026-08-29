@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Summer Tetris</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#111;color:cyan;font-family:monospace;display:flex;justify-content:center;align-items:center;min-height:100vh;background-size:cover;background-position:center;touch-action:manipulation}
+#game{display:flex;gap:20px;padding:20px;background:yellow;border:4px solid #555;box-shadow:0 0 0 5px #080808;flex-wrap:wrap;justify-content:center}
+canvas{background:#080808;image-rendering:pixelated;border:3px solid #777;display:block;max-width:100%;height:auto;touch-action:manipulation}
+#side{width:150px;min-width:130px}
+h1{margin:0 0 20px;font-size:30px}
+.box{border:2px solid #666;padding:10px;margin-bottom:12px}
+button{display:block;width:100%;margin:7px 0;padding:8px;background:#222;color:#fff;border:2px solid #777;font:inherit;text-align:center;cursor:pointer;touch-action:manipulation; position: relative;}
+button:hover,#start button:hover{background:#333}
+small{color:#aaa;line-height:1.5}
+#start{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:#0008;backdrop-filter:blur(6px)}
+#start button{width:180px;padding:18px;font-size:28px;font-weight:bold;background:#222;color:#fff;border:4px solid #aaa;box-shadow:0 0 0 4px #111}
+#over{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;text-align:center;z-index:20}
+#over div{background:#171717;border:4px solid #777;padding:30px}
+
+/* TASTI TOUCH - SEMPRE VISIBILI SOTTO IL CANVAS */
+#touch-controls {
+  display: flex !important;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+  padding: 10px;
+  flex-wrap: wrap;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  width: 100%;
+  background: rgba(0,0,0,0.3);
+  border-radius: 12px;
+}
+#touch-controls button {
+  width: 70px;
+  height: 70px;
+  font-size: 32px;
+  padding: 0;
+  margin: 2px;
+  border-radius: 16px;
+  background: #1a1a1a;
+  color: #0ff;
+  border: 3px solid #777;
+  box-shadow: 0 4px 0 #333;
+  touch-action: manipulation;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.05s;
+}
+#touch-controls button:active {
+  transform: translateY(4px);
+  box-shadow: 0 0px 0 #333;
+  background: #2a2a2a;
+}
+#touch-controls .wide {
+  width: 90px;
+}
+#touch-controls .drop-btn {
+  background: #2a1a1a;
+  border-color: #a55;
+  color: #f88;
+}
+#touch-controls .rotate-btn {
+  background: #1a2a1a;
+  border-color: #5a5;
+  color: #8f8;
+}
+
+/* Contenitore canvas + tasti */
+#canvas-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (max-width: 700px) {
+  #game { gap: 10px; padding: 10px; }
+  #side { width: 120px; min-width: 100px; }
+  #touch-controls button { width: 60px; height: 60px; font-size: 26px; }
+  #touch-controls .wide { width: 75px; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="start"><button onclick="playGame()">PLAY </button><p class="deh" style="font-size: 20px; padding: 10px; border-radius: 10px; border: 3px solid black; color: white; background: black;">All the music, texture ecc... Are made by me, and are Copyrighted.</p></div>
+
+
+<div id="game">
+  <!-- Contenitore canvas + tasti sotto -->
+  <div id="canvas-wrapper">
+    <canvas id="c" width="240" height="480"></canvas>
+    
+    <!-- TASTI TOUCH: sempre visibili sotto il canvas -->
+    <div id="touch-controls">
+      <button data-action="left">◀</button>
+      <button data-action="right">▶</button>
+      <button data-action="rotate" class="rotate-btn">↻</button>
+      <button data-action="drop" class="drop-btn wide">⬇⬇</button>
+    </div>
+  </div>
+
+  <div id="side">
+    <h1></h1>
+
+    <div class="box">
+      SCORE<br><b id="score">0</b><br><br>
+      LINES<br><b id="lines">0</b><br><br>
+      LEVEL<br><b id="level">1</b>
+    </div>
+
+    <button id="pauseBtn" onclick="pause()">PAUSA</button>
+
+    <small>
+      ← → / A D = muovi<br>
+      ↓ / S / 2 = scendi<br>
+      ↑ / W / 8 = ruota<br>
+      4 / 6 = sinistra/destra<br>
+      SPACE = caduta<br>
+      P = pausa
+    </small>
+  </div>
+</div>
+
+<div id="over">
+  <div>
+    <h1>GAME OVER</h1>
+    <p>Punteggio: <b id="finalScore">0</b></p>
+    <button onclick="location.reload()">RICOMINCIA</button>
+  </div>
+</div>
+
+<audio id="audio" loop></audio>
+
+<script>
+const MUSIC="musica.mp3",BACKGROUND="sfondo.png",
+LINE_SOUND="linea.mp3",TETRIS_SOUND="tetris.mp3",
+C=document.getElementById("c"),x=C.getContext("2d"),
+N=10,H=20,S=24,
+colors=["#00ffff","#ffff00","#aa00ff","#00ff00","#ff0000","#0066ff","#ff8800"],
+pieces=[[[1,1,1,1]],[[1,1],[1,1]],[[0,1,0],[1,1,1]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]],[[0,1,1],[1,1,0]],[[1,1,0],[0,1,1]]];
+
+let board=Array.from({length:H},()=>Array(N).fill(0)),
+p,px,py,score=0,lines=0,level=1,drop=1,last=0,paused=true,over=false,
+audio=document.getElementById("audio"),
+lineSound=new Audio(LINE_SOUND),
+tetrisSound=new Audio(TETRIS_SOUND);
+
+audio.src=MUSIC;
+audio.loop=true;
+audio.volume=.4;
+
+document.body.style.backgroundImage=`url("${BACKGROUND}")`;
+
+function playGame(){
+ audio.play().catch(()=>{});
+ paused=false;
+ document.getElementById("start").remove()
+}
+
+
+function newPiece(){
+ let n=Math.random()*7|0;
+ p=pieces[n].map(r=>r.slice());
+ p.col=n+1;
+ px=3;py=0;
+
+ if(hit(p,px,py)){
+  over=true;
+  document.getElementById("finalScore").textContent=score;
+  document.getElementById("over").style.display="flex"
+ }
+}
+
+function hit(a,X,Y){
+ return a.some((r,y)=>r.some((v,z)=>
+  v&&(X+z<0||X+z>=N||Y+y>=H||Y+y>=0&&board[Y+y][X+z])
+ ))
+}
+
+function rotate(){
+ let h=p.length,w=p[0].length,
+ a=Array.from({length:w},(_,y)=>
+  Array.from({length:h},(_,z)=>p[h-1-z][y])
+ );
+
+ a.col=p.col;
+
+ if(!hit(a,px,py))p=a;
+ else if(!hit(a,px-1,py))px--,p=a;
+ else if(!hit(a,px+1,py))px++,p=a;
+
+ draw()
+}
+
+function move(d){
+ if(!hit(p,px+d,py))px+=d;
+ draw()
+}
+
+function down(){
+ if(!hit(p,px,py+1))py++;
+ else lock();
+ draw()
+}
+
+function dropNow(){
+ while(!hit(p,px,py+1))py++;
+ lock();
+ draw()
+}
+
+function lock(){
+ p.forEach((r,y)=>r.forEach((v,z)=>{
+  if(v&&py+y>=0)board[py+y][px+z]=p.col
+ }));
+
+ let n=0;
+
+ board=board.filter(r=>{
+  if(r.every(Boolean)){
+   n++;
+   return false
+  }
+  return true
+ });
+
+ while(board.length<H)board.unshift(Array(N).fill(0));
+
+ if(n){
+  lines+=n;
+  score+=[0,100,300,500,800][n]*level;
+  level=Math.min(30,Math.floor(lines/10)+1);
+  drop=Math.max(.1,1-(level-1)*.1);
+
+  let sound=n===4?tetrisSound:lineSound;
+  sound.currentTime=0;
+  sound.play().catch(()=>{});
+
+  update()
+ }
+
+ newPiece()
+}
+
+function update(){
+ scoreEl.textContent=score;
+ linesEl.textContent=lines;
+ levelEl.textContent=level
+}
+
+const scoreEl=document.getElementById("score"),
+linesEl=document.getElementById("lines"),
+levelEl=document.getElementById("level");
+
+function draw(){
+ x.clearRect(0,0,C.width,C.height);
+ x.strokeStyle="#171717";
+
+ for(let i=1;i<N;i++){
+  x.beginPath();
+  x.moveTo(i*S,0);
+  x.lineTo(i*S,H*S);
+  x.stroke()
+ }
+
+ for(let i=1;i<H;i++){
+  x.beginPath();
+  x.moveTo(0,i*S);
+  x.lineTo(N*S,i*S);
+  x.stroke()
+ }
+
+ board.forEach((r,y)=>r.forEach((v,z)=>v&&cell(z,y,v)));
+
+ if(p)
+  p.forEach((r,y)=>r.forEach((v,z)=>v&&cell(px+z,py+y,p.col)))
+}
+
+function cell(X,Y,n){
+ if(Y<0)return;
+
+ x.fillStyle=colors[n-1];
+ x.fillRect(X*S,Y*S,S,S);
+
+ x.strokeStyle="#111";
+ x.strokeRect(X*S+1,Y*S+1,S-2,S-2);
+
+ x.fillStyle="#fff5";
+ x.fillRect(X*S+3,Y*S+3,S-7,4)
+}
+
+function loop(t){
+ if(!last)last=t;
+
+ if(!paused&&!over&&t-last>drop*1000)
+  down(),last=t;
+
+ draw();
+ requestAnimationFrame(loop)
+}
+
+function pause(){
+ if(!over){
+   paused=!paused;
+   document.getElementById("pauseBtn").textContent = paused ? "▶ RIPRENDI" : "PAUSA";
+ }
+}
+
+document.addEventListener("keydown",e=>{
+ let k=e.key.toLowerCase(),c=e.code;
+
+ if(["ArrowLeft","ArrowRight","ArrowDown","ArrowUp"," ","w","a","s","d","2","4","6","8","p"].includes(k)||c.startsWith("Numpad"))
+  e.preventDefault();
+
+ if(k==="p")return pause();
+ if(paused||over)return;
+
+ if(k==="arrowleft"||k==="a"||k==="4"||c==="Numpad4")move(-1);
+ else if(k==="Arrowright"||k==="d"||k==="6"||c==="Numpad6")move(1);
+ else if(k==="arrowdown"||k==="s"||k==="2"||c==="Numpad2")down();
+ else if(k==="arrowup"||k==="w"||k==="8"||c==="Numpad8")rotate();
+ else if(k===" ")dropNow()
+});
+
+// --- TOUCH CONTROLLER ---
+document.querySelectorAll("#touch-controls button").forEach(btn => {
+  const action = btn.dataset.action;
+  if (!action) return;
+
+  const handler = (e) => {
+    e.preventDefault();
+    if (over) return;
+    if (paused) return;
+
+    switch(action) {
+      case "left": move(-1); break;
+      case "right": move(1); break;
+      case "rotate": rotate(); break;
+      case "drop": dropNow(); break;
+    }
+  };
+
+  btn.addEventListener("touchstart", handler, { passive: false });
+  btn.addEventListener("mousedown", handler);
+  // Previeni il click che potrebbe causare doppie chiamate
+  btn.addEventListener("click", (e) => e.preventDefault());
+});
+
+newPiece();
+update();
+requestAnimationFrame(loop);
+</script>
+
+
+
+
+</body>
+</html>

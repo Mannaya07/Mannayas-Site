@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SchoollAppunti</title>
+
+<style>
+/* il resette lo stile ovviamente questo tutto stile */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, Helvetica, sans-serif; height: 100vh; overflow: hidden; background: #d8d8d8; }
+
+/* il layout principale */
+.app { display: grid; grid-template-columns: 240px 1fr 220px; height: 100vh; }
+
+/* la baretta a sinistra */
+.sidebar { background: #202124; color: white; border-right: 1px solid #111; display: flex; flex-direction: column; overflow: hidden; }
+.sidebar-header { height: 60px; display: flex; align-items: center; padding: 0 18px; font-size: 20px; font-weight: bold; border-bottom: 1px solid #3b3b3b; }
+.search-area { padding: 10px 10px 0 10px; }
+.search-area input {
+    width: 100%; padding: 9px 10px; border-radius: 6px; border: 1px solid #3b3b3b;
+    background: #303134; color: white; font-size: 13px;
+}
+.search-area input::placeholder { color: #999; }
+.folder-area { flex: 1; overflow-y: auto; padding: 10px; }
+
+.folder { margin-bottom: 5px; }
+.folder-header { display: flex; align-items: center; gap: 8px; padding: 9px; border-radius: 6px; cursor: pointer; user-select: none; }
+.folder-header:hover { background: #303134; }
+.folder-header.active { background: #3c4043; }
+.folder-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.notes { padding-left: 24px; }
+.note { display: flex; align-items: center; padding: 7px; border-radius: 5px; cursor: pointer; color: #ddd; font-size: 14px; }
+.note:hover { background: #303134; }
+.note.active { background: #4a4d51; color: white; }
+.note-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.empty-message { color: #999; font-size: 13px; padding: 10px; line-height: 1.5; }
+
+.sidebar-footer { border-top: 1px solid #3b3b3b; padding: 10px; }
+.reminders-button {
+    width: 100%; border: none; background: #0e7490; color: white; padding: 10px;
+    border-radius: 6px; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: space-between;
+}
+.reminders-button:hover { background: #0891b2; }
+.reminders-badge {
+    background: #dc2626; color: white; border-radius: 999px; padding: 1px 7px; font-size: 11px; font-weight: bold;
+}
+
+/* spazio di lavoros */
+.workspace { display: flex; flex-direction: column; background: #cfcfcf; overflow: hidden; position: relative; }
+
+/* la barra top */
+.topbar { min-height: 60px; background: white; border-bottom: 1px solid #bbb; display: flex; align-items: center; gap: 8px; padding: 0 15px; z-index: 20; flex-wrap: nowrap; overflow-x: auto; }
+.note-title { flex: 1; min-width: 100px; border: none; outline: none; font-size: 18px; font-weight: bold; }
+
+.top-button { border: none; background: #eeeeee; padding: 9px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; white-space: nowrap; }
+.top-button:hover { background: #ddd; }
+.save-button { background: #2563eb; color: white; }
+.save-button:hover { background: #1d4ed8; }
+.new-page-button { background: #16a34a; color: white; }
+.new-page-button:hover { background: #15803d; }
+.export-button { background: #7c3aed; color: white; }
+.export-button:hover { background: #6d28d9; }
+.import-button { background: #ea580c; color: white; }
+.import-button:hover { background: #c2410c; }
+.png-button { background: #0e7490; color: white; }
+.png-button:hover { background: #0891b2; }
+
+.page-nav { display: flex; align-items: center; gap: 4px; }
+.page-indicator { font-size: 12px; color: #555; white-space: nowrap; padding: 0 4px; }
+
+.autosave-indicator {
+    font-size: 12px; color: #16a34a; opacity: 0; transition: opacity 0.4s ease; white-space: nowrap;
+}
+.autosave-indicator.show { opacity: 1; }
+
+/* l'area del canvasse maremma */
+.canvas-container { flex: 1; overflow-y: auto; overflow-x: auto; padding: 35px; display: flex; justify-content: center; align-items: flex-start; position: relative; }
+#canvas { background: white; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.20); flex-shrink: 0; cursor: text; }
+#canvas.disabled { cursor: not-allowed; opacity: 0.45; }
+
+/* la toollebarre di destras */
+.toolbar { background: #202124; color: white; border-left: 1px solid #111; padding: 12px; overflow-y: auto; }
+.tool-title { font-weight: bold; margin-bottom: 15px; }
+.tool-group { margin-bottom: 18px; }
+.tool-label { display: block; font-size: 12px; color: #aaa; margin-bottom: 6px; }
+
+.tool-button { width: 100%; border: none; background: #303134; color: white; padding: 9px; border-radius: 6px; cursor: pointer; margin-bottom: 5px; text-align: left; }
+.tool-button:hover { background: #414246; }
+.tool-button.active { background: #2563eb; }
+
+select, input[type="number"] { width: 100%; padding: 8px; border-radius: 5px; border: none; margin-bottom: 5px; }
+input[type="color"] { width: 100%; height: 38px; border: none; padding: 0; cursor: pointer; }
+
+/* messaggio dell'editor bloccato */
+.editor-disabled-message {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, .95); padding: 25px 35px; border-radius: 10px;
+    text-align: center; box-shadow: 0 5px 20px rgba(0, 0, 0, .15); z-index: 10; color: #555;
+}
+.editor-disabled-message strong { display: block; color: #222; font-size: 18px; margin-bottom: 8px; }
+
+/* il menù destrossss */
+.context-menu {
+    position: fixed; background: white; border: 1px solid #bbb; box-shadow: 0 5px 15px rgba(0, 0, 0, .25);
+    border-radius: 6px; padding: 5px; display: none; z-index: 200;
+}
+.context-menu button { display: block; width: 180px; padding: 9px; border: none; background: white; text-align: left; cursor: pointer; }
+.context-menu button:hover { background: #eee; }
+
+/* Il modale */
+.modal-background {
+    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55); display: none;
+    align-items: center; justify-content: center; z-index: 100;
+}
+.modal-background.show { display: flex; }
+.modal { background: white; width: min(700px, 90vw); max-height: 80vh; overflow-y: auto; border-radius: 10px; padding: 25px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
+.modal h2 { margin-bottom: 15px; }
+.modal h3 { margin-top: 20px; margin-bottom: 8px; }
+.modal p, .modal li { line-height: 1.5; margin-bottom: 10px; }
+.close-modal { float: right; border: none; background: #eee; padding: 7px 12px; border-radius: 5px; cursor: pointer; }
+
+.hidden { display: none !important; }
+
+/* lo stile di defniziono promemoria compiti ecc... */
+.reminder-form { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+.reminder-form input[type="text"] {
+    flex: 2; min-width: 150px; padding: 9px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px;
+}
+.reminder-form input[type="date"] {
+    flex: 1; min-width: 130px; padding: 9px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px;
+}
+.reminder-form button {
+    border: none; background: #16a34a; color: white; padding: 9px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;
+}
+.reminder-form button:hover { background: #15803d; }
+
+.reminder-list { list-style: none; }
+.reminder-item {
+    display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px;
+    border: 1px solid #eee; margin-bottom: 8px;
+}
+.reminder-item.done { opacity: 0.5; }
+.reminder-item.done .reminder-text { text-decoration: line-through; }
+.reminder-text { flex: 1; }
+.reminder-date { font-size: 12px; color: #888; white-space: nowrap; }
+.reminder-delete { border: none; background: #fee2e2; color: #b91c1c; padding: 6px 10px; border-radius: 5px; cursor: pointer; }
+.reminder-delete:hover { background: #fecaca; }
+.reminder-empty { color: #999; font-size: 14px; padding: 10px 0; }
+
+/* le cose resposinsive */
+@media (max-width: 1100px) {
+    .app { grid-template-columns: 200px 1fr; }
+    .toolbar { display: none; }
+}
+@media (max-width: 700px) {
+    .topbar { overflow-x: auto; }
+    .note-title { min-width: 150px; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+    <!-- la barrette -->
+    <aside class="sidebar">
+        <div class="sidebar-header">📚 SchoollAppunti</div>
+        <div class="search-area">
+            <input id="searchInput" type="text" placeholder="🔍 Cerca appunti...">
+        </div>
+        <div id="folderArea" class="folder-area"></div>
+        <div class="sidebar-footer">
+            <button class="reminders-button" onclick="openReminders()">
+                <span>📌 Compiti / Promemoria</span>
+                <span id="remindersBadge" class="reminders-badge hidden">0</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Codesto è lo spazio di lavoro -->
+    <main class="workspace">
+        <div class="topbar">
+            <input id="noteTitle" class="note-title" placeholder="Nessun appunto selezionato" disabled>
+            <div class="page-nav">
+                <button class="top-button" onclick="goToPage(navPage - 1)">◀</button>
+                <span id="pageIndicator" class="page-indicator">Pag. 1/1</span>
+                <button class="top-button" onclick="goToPage(navPage + 1)">▶</button>
+            </div>
+            <button class="top-button" onclick="newNote()">➕ Nuovo</button>
+            <button id="newPageButton" class="top-button new-page-button" onclick="createNewPage()">📄 Nuova pagina</button>
+            <button class="top-button save-button" onclick="saveCurrentNote()">💾 Salva</button>
+            <button class="top-button png-button" onclick="exportAsImage()">🖼️ Esporta PNG</button>
+            <button class="top-button export-button" onclick="exportProjectFile()">📦 Esporta .SchoollAppunti</button>
+            <button class="top-button import-button" onclick="importProjectFile()">📥 Importa .SchoollAppunti</button>
+            <input id="projectFileInput" type="file" accept=".SchoollAppunti,application/octet-stream" style="display:none">
+            <span id="autosaveIndicator" class="autosave-indicator">✓ Salvato automaticamente</span>
+        </div>
+
+        <div id="canvasContainer" class="canvas-container">
+            <canvas id="canvas" width="900" height="1100" class="disabled"></canvas>
+            <div id="disabledMessage" class="editor-disabled-message">
+                <strong>📄 Nessun appunto aperto</strong>
+                <span>Crea una materia e premi <b>➕ Nuovo</b> per iniziare.</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Visibilità della toollebare -->
+    <aside class="toolbar">
+        <div class="tool-title">🛠 Strumenti</div>
+
+        <div class="tool-group">
+            <div class="tool-label">TESTO</div>
+            <button id="textTool" class="tool-button active" onclick="setTool('text')">🔤 Scrittura</button>
+            <label class="tool-label">Font</label>
+            <select id="fontFamily">
+                <option>Arial</option>
+                <option>Verdana</option>
+                <option>Times New Roman</option>
+                <option>Georgia</option>
+                <option>Courier New</option>
+                <option>Comic Sans MS</option>
+            </select>
+            <label class="tool-label">Dimensione</label>
+            <input id="fontSize" type="number" min="8" max="80" value="24">
+        </div>
+
+        <div class="tool-group">
+            <div class="tool-label">DISEGNO</div>
+            <button id="penTool" class="tool-button" onclick="setTool('pen')">✏️ Matita</button>
+            <button id="highlighterTool" class="tool-button" onclick="setTool('highlighter')">🖍️ Evidenziatore</button>
+            <button id="eraserTool" class="tool-button" onclick="setTool('eraser')">🧽 Gomma</button>
+            <label class="tool-label">Colore</label>
+            <input id="colorPicker" type="color" value="#000000">
+            <label class="tool-label">Spessore</label>
+            <input id="lineWidth" type="number" min="1" max="50" value="4">
+        </div>
+
+        <div class="tool-group">
+            <div class="tool-label">FORME</div>
+            <button id="rectangleTool" class="tool-button" onclick="setTool('rectangle')">▭ Rettangolo</button>
+            <button id="circleTool" class="tool-button" onclick="setTool('circle')">◯ Cerchio</button>
+            <button id="triangleTool" class="tool-button" onclick="setTool('triangle')">△ Triangolo</button>
+            <button id="lineTool" class="tool-button" onclick="setTool('line')">╱ Linea</button>
+        </div>
+
+        <div class="tool-group">
+            <div class="tool-label">IMMAGINI</div>
+            <button id="imageTool" class="tool-button" onclick="imageInput.click()">🖼️ Importa immagine</button>
+            <input id="imageInput" type="file" accept="image/*" style="display:none">
+        </div>
+
+        <div class="tool-group">
+            <div class="tool-label">AZIONI</div>
+            <button class="tool-button" onclick="undo()">↩️ Annulla</button>
+            <button class="tool-button" onclick="clearCurrentNote()">🗑️ Cancella tutto</button>
+            <button class="tool-button" onclick="showHelp()">❓ Come funziona?</button>
+        </div>
+    </aside>
+</div>
+
+<!-- Codesto è per l'aiuto dehh -->
+<div id="helpModal" class="modal-background">
+    <div class="modal">
+        <button class="close-modal" onclick="closeHelp()">✕</button>
+        <p>Programma creato da Davide Franzella</p>
+        <h2>📚 Come funziona SchoollAppunti</h2>
+        <p>Ogni materia contiene i propri appunti. Ogni appunto può contenere più pagine.</p>
+
+        <h3>📁 Materie</h3>
+        <p>Fai click destro nella barra sinistra per creare una nuova materia.</p>
+
+        <h3>📝 Appunti</h3>
+        <p>Seleziona una materia e premi <b>Nuovo</b> per creare un appunto. Fai click destro su un appunto per rinominarlo o eliminarlo.</p>
+
+        <h3>🔍 Ricerca</h3>
+        <p>Usa la barra di ricerca in alto nella sidebar per trovare velocemente un appunto per nome.</p>
+
+        <h3>✍️ Scrittura</h3>
+        <p>Dopo aver creato un appunto puoi cliccare sul foglio e scrivere/disegnare ecc... direttamente in qualsiasi punto del foglio</p>
+
+        <h3>📄 Pagine</h3>
+        <p>Le pagine non vengono create automaticamente. Premi <b>📄 Nuova pagina</b> per aggiungere una nuova pagina allo stesso appunto. Usa le frecce ◀ ▶ in alto per spostarti tra le pagine già create.</p>
+
+        <h3>💾 Salvataggio locale e automatico</h3>
+        <p>Prima di cambiare cartella, salva sempre prima di cambiare cartella, a volte può succedere che non salvi automaticamente delle cose. Il pulsante <b>Salva</b> salva il progetto nel browser del dispositivo. L'app salva automaticamente ogni 30 secondi mentre lavori su un appunto.</p>
+
+        <h3>📦 File .SchoollAppunti</h3>
+        <p>Il pulsante <b>Esporta .SchoollAppunti</b> crea un file contenente tutto il progetto, comprese le pagine e le immagini.</p>
+        <p>Puoi conservare il file e trasferirlo su un altro dispositivo o usarlo nello stesso dispositivo se hai perso i dati, hai fatto un reset, ecc... con <b>📥 Importa .SchoollAppunti</b> appunto, puoi ripristinare i dati dei tuoi progetti e anche condividerli se vuoi.</p>
+
+        <h3>🖼️ Esporta PNG</h3>
+        <p>Salva l'appunto aperto come singola immagine PNG, comoda da inviare o stampare.</p>
+
+        <h3>📌 Compiti / Promemoria</h3>
+        <p>Dal pulsante in basso a sinistra puoi tenere una lista di compiti con eventuale scadenza, separata dagli appunti.</p>
+
+        <h3>⌫ Backspace</h3>
+        <p>Quando stai scrivendo, il tasto Backspace elimina l'ultimo carattere scritto.</p>
+
+        <h3>✏️ Disegno</h3>
+        <p>Seleziona la matita e disegna direttamente sul foglio.</p>
+
+        <h3>🖍️ Evidenziatore</h3>
+        <p>L'evidenziatore è semi-trasparente, quindi il testo rimane visibile.</p>
+
+        <h3>🌐 Offline</h3>
+        <p>SchoollAppunti funziona interamente offline: non contatta nessun server e non richiede connessione a internet, nemmeno per i font o le icone. "ovviamente solo se scaricato localmente sul computer"</p>
+    </div>
+</div>
+
+<!-- Il promemoria -->
+<div id="remindersModal" class="modal-background">
+    <div class="modal">
+        <button class="close-modal" onclick="closeReminders()">✕</button>
+        <h2>📌 Compiti / Promemoria</h2>
+        <div class="reminder-form">
+            <input id="reminderText" type="text" placeholder="Es: Studiare storia cap. 5">
+            <input id="reminderDate" type="date">
+            <button onclick="addReminder()">➕ Aggiungi</button>
+        </div>
+        <ul id="reminderList" class="reminder-list"></ul>
+    </div>
+</div>
+
+<!-- MENU DESTRO -->
+<div id="contextMenu" class="context-menu"></div>
+
+<!-- Da qui sto c'è tutti il codice effettivo per far funzionare tutte le varie cose -->
+
+<script>
+/* gli elementi HTML  */
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const folderArea = document.getElementById("folderArea");
+const noteTitle = document.getElementById("noteTitle");
+const disabledMessage = document.getElementById("disabledMessage");
+const contextMenu = document.getElementById("contextMenu");
+const canvasContainer = document.getElementById("canvasContainer");
+const searchInput = document.getElementById("searchInput");
+const pageIndicator = document.getElementById("pageIndicator");
+const autosaveIndicator = document.getElementById("autosaveIndicator");
+
+const colorPicker = document.getElementById("colorPicker");
+const lineWidthInput = document.getElementById("lineWidth");
+const fontFamily = document.getElementById("fontFamily");
+const fontSize = document.getElementById("fontSize");
+const imageInput = document.getElementById("imageInput");
+const textTool = document.getElementById("textTool");
+const helpModal = document.getElementById("helpModal");
+const remindersModal = document.getElementById("remindersModal");
+
+/* le dimensioni di varie cose leggi sotto per capire cosa e se vuoi modificare magari qualcosa in de futuroos */
+const PAGE_WIDTH = 900;
+const PAGE_HEIGHT = 1100;
+const PAGE_GAP = 50;
+
+const MARGIN_LEFT = 60;
+const MARGIN_TOP = 80;
+const MARGIN_RIGHT = 60;
+const MARGIN_BOTTOM = 70;
+
+const MAX_HISTORY = 50;
+const SOURCE_OVER = "source-over";
+const DESTINATION_OUT = "destination-out";
+
+/* il database degli appunti */
+let folders = [];
+try {
+    folders = JSON.parse(localStorage.getItem("schoolNotesFolders") || "[]");
+    if (!Array.isArray(folders)) folders = [];
+} catch (error) {
+    console.error("Errore caricamento database:", error);
+    folders = [];
+}
+
+let currentFolderId = null;
+let currentNoteId = null;
+
+/* questo è il database del promemoria */
+let reminders = [];
+try {
+    reminders = JSON.parse(localStorage.getItem("schoolNotesReminders") || "[]");
+    if (!Array.isArray(reminders)) reminders = [];
+} catch (error) {
+    console.error("Errore caricamento promemoria:", error);
+    reminders = [];
+}
+
+/* qui c'è lo stato dell'editorrr */
+let currentTool = "text";
+let isDrawing = false;
+let startX = 0, startY = 0;
+let cursorX = MARGIN_LEFT, cursorY = MARGIN_TOP;
+let currentPage = 0;
+let navPage = 0;
+let pendingImage = null;
+let history = [];
+let searchQuery = "";
+let autosaveTimer = null;
+let autosaveHideTimer = null;
+
+/* ID */
+function generateId() {
+    return Date.now().toString() + Math.random().toString(36).substring(2);
+}
+
+/* Database */
+function saveDatabase() {
+    try {
+        localStorage.setItem("schoolNotesFolders", JSON.stringify(folders));
+        return true;
+    } catch (error) {
+        console.error(error);
+        alert("Non è stato possibile salvare localmente. Il progetto potrebbe essere troppo grande per il localStorage.");
+        return false;
+    }
+}
+
+/* Funzione del reset del canvas */
+function resetCanvas() {
+    canvas.width = PAGE_WIDTH;
+    canvas.height = PAGE_HEIGHT;
+
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
+
+    cursorX = MARGIN_LEFT;
+    cursorY = MARGIN_TOP;
+    currentPage = 0;
+    navPage = 0;
+    history = [];
+
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = SOURCE_OVER;
+    ctx.textAlign = "left";
+
+    updatePageIndicator();
+}
+
+/* L'editor abilitato */
+function setEditorEnabled(enabled) {
+    canvas.classList.toggle("disabled", !enabled);
+    disabledMessage.classList.toggle("hidden", enabled);
+    noteTitle.disabled = !enabled;
+}
+
+/* funzio della ricerca */
+searchInput.addEventListener("input", () => {
+    searchQuery = searchInput.value.trim().toLowerCase();
+    renderSidebar();
+});
+
+/* tanto tutto costì e funzioni un c'è le scrivo piu dopo, comunque funzione della sidebar */
+function renderSidebar() {
+    folderArea.replaceChildren();
+
+    if (folders.length === 0) {
+        const message = document.createElement("div");
+        message.className = "empty-message";
+        message.innerHTML = "Fai click destro qui<br>per creare una materia.";
+        folderArea.appendChild(message);
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    folders.forEach(folder => {
+        const folderElement = document.createElement("div");
+        folderElement.className = "folder";
+
+        const header = document.createElement("div");
+        header.className = "folder-header";
+        if (folder.id === currentFolderId) header.classList.add("active");
+
+        const icon = document.createElement("span");
+        icon.innerText = "📁";
+
+        const name = document.createElement("span");
+        name.className = "folder-name";
+        name.innerText = folder.name;
+
+        header.appendChild(icon);
+        header.appendChild(name);
+        header.onclick = () => selectFolder(folder.id);
+        header.oncontextmenu = event => {
+            event.preventDefault();
+            showFolderMenu(event, folder);
+        };
+
+        folderElement.appendChild(header);
+
+        const notes = document.createElement("div");
+        notes.className = "notes";
+
+        if (Array.isArray(folder.notes)) {
+            const notesFragment = document.createDocumentFragment();
+
+            folder.notes.forEach(note => {
+                if (searchQuery && !(note.title || "").toLowerCase().includes(searchQuery)) return;
+
+                const noteElement = document.createElement("div");
+                noteElement.className = "note";
+                if (note.id === currentNoteId) noteElement.classList.add("active");
+
+                const noteName = document.createElement("span");
+                noteName.className = "note-name";
+                noteName.innerText = "📄 " + (note.title || "Appunto senza nome");
+
+                noteElement.appendChild(noteName);
+                noteElement.onclick = () => openNote(folder.id, note.id);
+                noteElement.oncontextmenu = event => {
+                    event.preventDefault();
+                    showNoteMenu(event, folder, note);
+                };
+
+                notesFragment.appendChild(noteElement);
+            });
+
+            notes.appendChild(notesFragment);
+        }
+
+        folderElement.appendChild(notes);
+        fragment.appendChild(folderElement);
+    });
+
+    folderArea.appendChild(fragment);
+}
+
+/* Il menu dehla chaaartella */
+
+
+
+function showFolderMenu(event, folder) {
+    contextMenu.replaceChildren();
+
+    const rename = document.createElement("button");
+    rename.innerText = "✏️ Rinomina";
+    rename.onclick = () => {
+        const name = prompt("Nuovo nome:", folder.name);
+        if (name) {
+            folder.name = name;
+            saveDatabase();
+            renderSidebar();
+        }
+    };
+
+    const remove = document.createElement("button");
+    remove.innerText = "🗑️ Elimina";
+    remove.onclick = () => {
+        if (!confirm("Eliminare questa materia e tutti i suoi appunti?")) return;
+
+        folders = folders.filter(f => f.id !== folder.id);
+
+        if (currentFolderId === folder.id) {
+            currentFolderId = null;
+            currentNoteId = null;
+            noteTitle.value = "";
+            resetCanvas();
+            setEditorEnabled(false);
+        }
+
+        saveDatabase();
+        renderSidebar();
+    };
+
+    contextMenu.appendChild(rename);
+    contextMenu.appendChild(remove);
+    contextMenu.style.left = event.clientX + "px";
+    contextMenu.style.top = event.clientY + "px";
+    contextMenu.style.display = "block";
+}
+
+/* Il menu degli appunti */
+
+
+function showNoteMenu(event, folder, note) {
+    contextMenu.replaceChildren();
+
+    const rename = document.createElement("button");
+    rename.innerText = "✏️ Rinomina";
+    rename.onclick = () => {
+        const name = prompt("Nuovo nome dell'appunto:", note.title);
+        if (name) {
+            note.title = name;
+            if (note.id === currentNoteId) noteTitle.value = name;
+            saveDatabase();
+            renderSidebar();
+        }
+    };
+
+    const remove = document.createElement("button");
+    remove.innerText = "🗑️ Elimina";
+    remove.onclick = () => {
+        if (!confirm("Eliminare questo appunto?")) return;
+
+        folder.notes = folder.notes.filter(n => n.id !== note.id);
+
+        if (currentNoteId === note.id) {
+            currentNoteId = null;
+            noteTitle.value = "";
+            resetCanvas();
+            setEditorEnabled(false);
+        }
+
+        saveDatabase();
+        renderSidebar();
+    };
+
+    contextMenu.appendChild(rename);
+    contextMenu.appendChild(remove);
+    contextMenu.style.left = event.clientX + "px";
+    contextMenu.style.top = event.clientY + "px";
+    contextMenu.style.display = "block";
+}
+
+/* Funzio del click destro nell sidrebaaarrsss*/
+
+
+folderArea.addEventListener("contextmenu", event => {
+    event.preventDefault();
+    if (event.target.closest(".folder-header") || event.target.closest(".note")) return;
+
+    contextMenu.replaceChildren();
+
+    const button = document.createElement("button");
+    button.innerText = "📁 Nuova materia";
+    button.onclick = createFolder;
+
+    contextMenu.appendChild(button);
+    contextMenu.style.left = event.clientX + "px";
+    contextMenu.style.top = event.clientY + "px";
+    contextMenu.style.display = "block";
+});
+
+document.addEventListener("click", event => {
+    if (!event.target.closest(".context-menu")) contextMenu.style.display = "none";
+});
+
+/* funzione della creazione della cartella della specifica funzione chiamata prima */
+
+
+function createFolder() {
+    contextMenu.style.display = "none";
+
+    const name = prompt("Nome della materia:");
+    if (!name) return;
+
+    const folder = { id: generateId(), name: name, notes: [] };
+    folders.push(folder);
+
+    saveDatabase();
+    renderSidebar();
+    selectFolder(folder.id);
+}
+
+/* funzione di selezione cartella */
+
+
+function selectFolder(id) {
+    currentFolderId = id;
+    currentNoteId = null;
+    noteTitle.value = "";
+
+    resetCanvas();
+    setEditorEnabled(false);
+    renderSidebar();
+}
+
+/* funzione di creazione nuovo appunto */
+
+
+function newNote() {
+    if (!currentFolderId) {
+        alert("Prima devi creare o selezionare una materia.");
+        return;
+    }
+
+    const title = prompt("Nome dell'appunto:");
+    if (!title) return;
+
+    const folder = folders.find(f => f.id === currentFolderId);
+    if (!folder) return;
+
+    if (!Array.isArray(folder.notes)) folder.notes = [];
+
+    const note = {
+        id: generateId(), title: title, canvas: null,
+        cursorX: MARGIN_LEFT, cursorY: MARGIN_TOP, currentPage: 0
+    };
+
+    folder.notes.push(note);
+    currentNoteId = note.id;
+
+    noteTitle.value = title;
+    resetCanvas();
+    setEditorEnabled(true);
+
+    saveDatabase();
+    renderSidebar();
+}
+
+/* funzionedeh dell'apertuara dell'appunto */
+
+
+function openNote(folderId, noteId) {
+    currentFolderId = folderId;
+    currentNoteId = noteId;
+
+    const folder = folders.find(f => f.id === folderId);
+    if (!folder) return;
+
+    const note = folder.notes.find(n => n.id === noteId);
+    if (!note) return;
+
+    noteTitle.value = note.title || "Appunto senza nome";
+    setEditorEnabled(false);
+
+    if (note.canvas) {
+        loadCanvas(note, () => setEditorEnabled(true));
+    } else {
+        resetCanvas();
+        setEditorEnabled(true);
+    }
+
+    renderSidebar();
+}
+
+/* Carica il canvasse */
+
+
+/* Qui alle 0:00 HHAHAHAHAHAHAHAHAHAHAHAHAHAHAH */
+
+function loadCanvas(note, onDone) {
+    const image = new Image();
+
+    image.onload = () => {
+        canvas.width = image.width;
+        canvas.height = image.height;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(image, 0, 0);
+
+        const computedPage = Math.max(0, Math.round((canvas.height - PAGE_HEIGHT) / (PAGE_HEIGHT + PAGE_GAP)));
+        currentPage = Number.isInteger(note.currentPage) ? note.currentPage : computedPage;
+        cursorX = Number.isFinite(note.cursorX) ? note.cursorX : MARGIN_LEFT;
+        cursorY = Number.isFinite(note.cursorY) ? note.cursorY : (currentPage * (PAGE_HEIGHT + PAGE_GAP) + MARGIN_TOP);
+
+        history = [];
+        navPage = currentPage;
+
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = SOURCE_OVER;
+
+        updatePageIndicator();
+        if (onDone) onDone();
+    };
+
+    image.onerror = () => {
+        resetCanvas();
+        alert("Errore nel caricamento dell'appunto.");
+        if (onDone) onDone();
+    };
+
+    image.src = note.canvas;
+}
+
+
+/* Salva il tuo appuntooosss */
+
+
+
+function saveCurrentNote(silent = false) {
+    if (!currentFolderId || !currentNoteId) {
+        if (!silent) alert("Prima crea un appunto.");
+        return false;
+    }
+
+    const folder = folders.find(f => f.id === currentFolderId);
+    if (!folder) return false;
+
+    const note = folder.notes.find(n => n.id === currentNoteId);
+    if (!note) return false;
+
+    note.title = noteTitle.value.trim() || "Appunto senza nome";
+    note.canvas = canvas.toDataURL("image/png");
+    note.cursorX = cursorX;
+    note.cursorY = cursorY;
+    note.currentPage = currentPage;
+
+    const success = saveDatabase();
+
+    if (success) {
+        renderSidebar();
+        if (!silent) alert("Appunto salvato!");
+    }
+
+    return success;
+}
+
+/* Il salvataggio  automaticoss  */
+
+
+
+function showAutosaveIndicator() {
+    autosaveIndicator.classList.add("show");
+    clearTimeout(autosaveHideTimer);
+    autosaveHideTimer = setTimeout(() => autosaveIndicator.classList.remove("show"), 2000);
+}
+
+autosaveTimer = setInterval(() => {
+    if (!currentNoteId) return;
+    const success = saveCurrentNote(true);
+    if (success) showAutosaveIndicator();
+}, 30000);
+
+/* Cambios titoloss */
+
+
+
+noteTitle.addEventListener("input", () => {
+    if (!currentFolderId || !currentNoteId) return;
+
+    const folder = folders.find(f => f.id === currentFolderId);
+    if (!folder) return;
+
+    const note = folder.notes.find(n => n.id === currentNoteId);
+    if (note) note.title = noteTitle.value;
+});
+
+/* strumentoss il tu sei arrivato qui riprendi per benino*/
+
+
+const TOOL_BUTTON_IDS = {
+    text: "textTool", pen: "penTool", highlighter: "highlighterTool", eraser: "eraserTool",
+    rectangle: "rectangleTool", circle: "circleTool", triangle: "triangleTool", line: "lineTool"
+};
+
+function setTool(tool) {
+    if (!currentNoteId) {
+        alert("Prima crea un appunto.");
+        return;
+    }
+
+    currentTool = tool;
+    pendingImage = null;
+
+    document.querySelectorAll(".tool-button").forEach(button => button.classList.remove("active"));
+    const buttonId = TOOL_BUTTON_IDS[tool];
+    if (buttonId) document.getElementById(buttonId).classList.add("active");
+}
+
+/* funzione di individuazione della posizione del mouse */
+
+
+function getMousePosition(event) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+        x: (event.clientX - rect.left) * (canvas.width / rect.width),
+        y: (event.clientY - rect.top) * (canvas.height / rect.height)
+    };
+}
+
+
+
+
+/* I'ttu sei arrivato costi guarda tutto per benino CRONOLOGIA (UNDO/BACKSPACE)
+   Per rendere la scrittura più veloce e leggera in memoria, per ogni carattere
+   che viene digitato si salva solo il piccolo rettangolo di pixel interessato
+   (tipo "char"), invece dell'intero foglio. Per pennello/forme/pagine,
+   che avvengono una sola volta per azione, si salva l'intero foglio
+   (tipo "full"). Per l'invio (nuova riga), che non disegna nulla, si salva
+   solo la posizione del cursore (tipo "cursor").
+*/
+
+
+
+function trimHistory() {
+    if (history.length > MAX_HISTORY) history.shift();
+}
+
+function saveFullHistory() {
+    history.push({
+        type: "full",
+        imageData: ctx.getImageData(0, 0, canvas.width, canvas.height),
+        width: canvas.width,
+        height: canvas.height,
+        cursorX: cursorX, cursorY: cursorY, currentPage: currentPage
+    });
+    trimHistory();
+}
+
+function clampRect(x, y, w, h) {
+    x = Math.floor(Math.max(0, Math.min(x, canvas.width - 1)));
+    y = Math.floor(Math.max(0, Math.min(y, canvas.height - 1)));
+    w = Math.ceil(Math.max(1, Math.min(w, canvas.width - x)));
+    h = Math.ceil(Math.max(1, Math.min(h, canvas.height - y)));
+    return { x, y, w, h };
+}
+
+function saveCharHistory(rawX, rawY, rawW, rawH) {
+    const rect = clampRect(rawX, rawY, rawW, rawH);
+    history.push({
+        type: "char",
+        region: rect,
+        imageData: ctx.getImageData(rect.x, rect.y, rect.w, rect.h),
+        cursorX: cursorX, cursorY: cursorY, currentPage: currentPage
+    });
+    trimHistory();
+}
+
+function saveCursorHistory() {
+    history.push({ type: "cursor", cursorX: cursorX, cursorY: cursorY, currentPage: currentPage });
+    trimHistory();
+}
+
+function restoreState(state) {
+    if (state.type === "full") {
+        if (canvas.width !== state.width || canvas.height !== state.height) {
+            canvas.width = state.width;
+            canvas.height = state.height;
+        }
+        ctx.putImageData(state.imageData, 0, 0);
+    } else if (state.type === "char") {
+        ctx.putImageData(state.imageData, state.region.x, state.region.y);
+    }
+
+    cursorX = state.cursorX;
+    cursorY = state.cursorY;
+    currentPage = state.currentPage;
+
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = SOURCE_OVER;
+
+    navPage = Math.min(navPage, getTotalPages() - 1);
+    updatePageIndicator();
+}
+
+/* posizione del cursore */
+function setCursorFromClick(x, y) {
+    cursorX = Math.max(MARGIN_LEFT, x);
+    cursorY = Math.max(MARGIN_TOP, y);
+}
+
+/* Click  del canvas (mouse down) */
+
+canvas.addEventListener("mousedown", event => {
+    if (!currentNoteId) return;
+
+    const pos = getMousePosition(event);
+    startX = pos.x;
+    startY = pos.y;
+
+    if (currentTool === "text") {
+        setCursorFromClick(pos.x, pos.y);
+        return;
+    }
+
+    if (currentTool === "pen" || currentTool === "highlighter" || currentTool === "eraser") {
+        saveFullHistory();
+        isDrawing = true;
+
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineCap = "round";
+        ctx.lineWidth = Number(lineWidthInput.value);
+
+        if (currentTool === "eraser") {
+            ctx.globalCompositeOperation = DESTINATION_OUT;
+            ctx.globalAlpha = 1;
+        } else if (currentTool === "highlighter") {
+            ctx.globalCompositeOperation = SOURCE_OVER;
+            ctx.globalAlpha = 0.01;
+            ctx.strokeStyle = colorPicker.value;
+        } else {
+            ctx.globalCompositeOperation = SOURCE_OVER;
+            ctx.globalAlpha = 1;
+            ctx.strokeStyle = colorPicker.value;
+        }
+    }
+
+    if (["rectangle", "circle", "triangle", "line"].includes(currentTool)) saveFullHistory();
+});
+
+/* MOUSE MOVE / UP / LEAVE */
+canvas.addEventListener("mousemove", event => {
+    if (!isDrawing) return;
+
+    const pos = getMousePosition(event);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+});
+
+canvas.addEventListener("mouseup", event => {
+    if (currentTool === "pen" || currentTool === "highlighter" || currentTool === "eraser") {
+        isDrawing = false;
+        ctx.closePath();
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = SOURCE_OVER;
+        return;
+    }
+
+    const pos = getMousePosition(event);
+    if (["rectangle", "circle", "triangle", "line"].includes(currentTool)) {
+        drawShape(currentTool, startX, startY, pos.x, pos.y);
+    }
+});
+
+canvas.addEventListener("mouseleave", () => {
+    if (isDrawing) {
+        isDrawing = false;
+        ctx.closePath();
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = SOURCE_OVER;
+    }
+});
+
+/* Funzione del disegno della forma */
+
+
+function drawShape(type, x1, y1, x2, y2) {
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = SOURCE_OVER;
+    ctx.strokeStyle = colorPicker.value;
+    ctx.lineWidth = Number(lineWidthInput.value);
+
+    if (type === "rectangle") {
+        ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+    }
+
+    if (type === "line") {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+    }
+
+    if (type === "circle") {
+        const centerX = (x1 + x2) / 2;
+        const centerY = (y1 + y2) / 2;
+        const radiusX = Math.abs(x2 - x1) / 2;
+        const radiusY = Math.abs(y2 - y1) / 2;
+
+        ctx.beginPath();
+        ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+
+    if (type === "triangle") {
+        ctx.beginPath();
+        ctx.moveTo((x1 + x2) / 2, y1);
+        ctx.lineTo(x2, y2);
+        ctx.lineTo(x1, y2);
+        ctx.closePath();
+        ctx.stroke();
+    }
+}
+
+/* funzione scrittura / dimesioni scrittura /  */
+
+
+function getLineHeight() {
+    return Number(fontSize.value) * 1.35;
+}
+
+function writeText(character) {
+    const size = Number(fontSize.value);
+    ctx.font = `${size}px ${fontFamily.value}`;
+
+    const width = ctx.measureText(character).width;
+    const maxX = PAGE_WIDTH - MARGIN_RIGHT;
+
+    if (cursorX + width > maxX) {
+        cursorX = MARGIN_LEFT;
+        cursorY += getLineHeight();
+    }
+
+    const currentPageTop = currentPage * (PAGE_HEIGHT + PAGE_GAP);
+    const pageBottom = currentPageTop + PAGE_HEIGHT - MARGIN_BOTTOM;
+
+    if (cursorY > pageBottom) {
+        alert("Hai raggiunto la fine della pagina. Premi 📄 Nuova pagina per continuare.");  /* Avviso di creazione nuova pagina */
+        return;
+    }
+
+    saveCharHistory(cursorX - 1, cursorY - size * 1.1, Math.max(width, 1) + 3, size * 1.5);
+
+    ctx.fillStyle = colorPicker.value;
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = SOURCE_OVER;
+    ctx.fillText(character, cursorX, cursorY);
+
+    cursorX += width;
+}
+
+/* Funzione del tasto backspace */
+
+
+function handleBackspace() {
+    if (history.length === 0) return;
+    restoreState(history.pop());
+}
+
+/* Vari  funzione della tastiera come escape backspace enter */
+
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+        closeHelp();
+        closeReminders();
+    }
+
+    if (!currentNoteId || currentTool !== "text") return;
+    if (document.activeElement === noteTitle) return;
+
+    if (event.key === "Backspace") {
+        event.preventDefault();
+        handleBackspace();
+        return;
+    }
+
+    if (event.key === "Enter") {
+        event.preventDefault();
+        saveCursorHistory();
+
+        cursorX = MARGIN_LEFT;
+        cursorY += getLineHeight();
+
+        const pageTop = currentPage * (PAGE_HEIGHT + PAGE_GAP);
+        const pageBottomLimit = pageTop + PAGE_HEIGHT - MARGIN_BOTTOM;
+        if (cursorY > pageBottomLimit) cursorY = pageBottomLimit;
+
+        return;
+    }
+
+    if (event.key === " ") {
+        event.preventDefault();
+        writeText(" ");
+        return;
+    }
+
+    if (event.key.length === 1) {
+        event.preventDefault();
+        writeText(event.key);
+    }
+});
+
+/* funzione della nuova pagina */
+
+
+function createNewPage() {
+    if (!currentNoteId) {
+        alert("Prima crea un appunto.");
+        return;
+    }
+
+    saveFullHistory();
+
+    const oldHeight = canvas.height;
+
+    const oldCanvas = document.createElement("canvas");
+    oldCanvas.width = canvas.width;
+    oldCanvas.height = canvas.height;
+    oldCanvas.getContext("2d").drawImage(canvas, 0, 0);
+
+    canvas.width = PAGE_WIDTH;
+    canvas.height = oldHeight + PAGE_GAP + PAGE_HEIGHT;
+
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(oldCanvas, 0, 0);
+
+    const separatorY = oldHeight + PAGE_GAP / 2;
+
+    ctx.strokeStyle = "#cccccc";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, separatorY);
+    ctx.lineTo(canvas.width, separatorY);
+    ctx.stroke();
+
+    ctx.fillStyle = "#999";
+    ctx.font = "14px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("Pagina " + (currentPage + 2), canvas.width / 2, separatorY + 5);
+    ctx.textAlign = "left";
+
+    currentPage++;
+    cursorX = MARGIN_LEFT;
+    cursorY = oldHeight + PAGE_GAP + MARGIN_TOP;
+
+    goToPage(currentPage);
+}
+
+/* Navigazione delle pagine tramite freccete */
+
+function getTotalPages() {
+    return Math.max(1, Math.round((canvas.height + PAGE_GAP) / (PAGE_HEIGHT + PAGE_GAP)));
+}
+
+function updatePageIndicator() {
+    const total = getTotalPages();
+    if (navPage > total - 1) navPage = total - 1;
+    if (navPage < 0) navPage = 0;
+    pageIndicator.innerText = "Pag. " + (navPage + 1) + "/" + total;
+}
+
+function goToPage(n) {
+    if (!currentNoteId) return;
+
+    const total = getTotalPages();                      /* Funzione che va a prendere tutte le pagine create, in modo da poterle usare contare ecc... */
+    navPage = Math.max(0, Math.min(n, total - 1));
+
+    const targetTop = navPage * (PAGE_HEIGHT + PAGE_GAP);
+    canvasContainer.scrollTo({ top: canvas.offsetTop + targetTop - 10, behavior: "smooth" });
+
+    updatePageIndicator();
+}
+
+/* Funzione di importazione dellLe immagini */
+
+
+imageInput.addEventListener("change", event => {
+    if (!currentNoteId) {
+        alert("Prima crea un appunto.");
+        return;
+    }
+
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+        const image = new Image();
+        image.onload = () => {
+            pendingImage = image;
+            currentTool = "image";
+            document.querySelectorAll(".tool-button").forEach(button => button.classList.remove("active"));
+            document.getElementById("imageTool").classList.add("active");
+            alert("Ora clicca sul foglio per inserire l'immagine.");
+        };
+        image.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+    imageInput.value = "";
+});
+
+/* Funzione vera e propria dell'inserimento tramite click dell'immagine nel canvas */
+
+
+canvas.addEventListener("click", event => {
+    if (currentTool !== "image" || !pendingImage) return;
+
+    const pos = getMousePosition(event);
+    saveFullHistory();
+
+    let width = pendingImage.width;
+    let height = pendingImage.height;
+    const maxWidth = PAGE_WIDTH - MARGIN_LEFT - MARGIN_RIGHT;
+
+    if (width > maxWidth) {
+        const ratio = maxWidth / width;
+        width = maxWidth;
+        height *= ratio;
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = SOURCE_OVER;
+    ctx.drawImage(pendingImage, pos.x, pos.y, width, height);
+
+    pendingImage = null;
+    currentTool = "text";
+    document.querySelectorAll(".tool-button").forEach(button => button.classList.remove("active"));
+    textTool.classList.add("active");
+});
+
+/* Undo / cancella il tuttoss */
+
+
+function undo() {
+    if (history.length === 0) return;
+    restoreState(history.pop());
+}
+
+function clearCurrentNote() {
+    if (!currentNoteId) return;
+    if (!confirm("Vuoi cancellare completamente questo appunto?")) return;
+
+    resetCanvas();
+    history = [];
+}
+
+/* Funzione di esportazione pagina con png */
+
+
+function exportAsImage() {
+    if (!currentNoteId) {
+        alert("Prima apri un appunto.");
+        return;
+    }
+
+    canvas.toBlob(blob => {
+        if (!blob) {
+            alert("Non è stato possibile creare l'immagine.");
+            return;
+        }
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = (noteTitle.value.trim() || "appunto") + ".png";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }, "image/png");
+}
+
+/* Funzione tasto aiuto per vedere informazioni */
+
+function showHelp() { helpModal.classList.add("show"); }
+function closeHelp() { helpModal.classList.remove("show"); }
+
+/* funzione del promemoria per i compiti */
+
+
+function saveReminders() {
+    try {
+        localStorage.setItem("schoolNotesReminders", JSON.stringify(reminders));
+        return true;
+    } catch (error) {
+        console.error(error);
+        alert("Non è stato possibile salvare i promemoria localmente.");
+        return false;
+    }
+}
+
+function openReminders() {
+    renderReminders();
+    remindersModal.classList.add("show");
+}
+
+function closeReminders() { remindersModal.classList.remove("show"); }
+
+function addReminder() {
+    const textInput = document.getElementById("reminderText");
+    const dateInput = document.getElementById("reminderDate");
+
+    const text = textInput.value.trim();
+    if (!text) {
+        alert("Scrivi cosa devi fare.");
+        return;
+    }
+
+    reminders.push({
+        id: generateId(),
+        text: text,
+        dueDate: dateInput.value || null,
+        done: false
+    });
+
+    textInput.value = "";
+    dateInput.value = "";
+
+    saveReminders();
+    renderReminders();
+}
+
+function toggleReminder(id) {
+    const reminder = reminders.find(r => r.id === id);
+    if (!reminder) return;
+
+    reminder.done = !reminder.done;
+    saveReminders();
+    renderReminders();
+}
+
+function deleteReminder(id) {
+    reminders = reminders.filter(r => r.id !== id);
+    saveReminders();
+    renderReminders();
+}
+
+function formatReminderDate(dateString) {
+    const parts = dateString.split("-");
+    if (parts.length !== 3) return dateString;
+    return parts[2] + "/" + parts[1] + "/" + parts[0];
+}
+
+function renderReminders() {
+    const list = document.getElementById("reminderList");
+    list.replaceChildren();
+
+    const sorted = [...reminders].sort((a, b) => {
+        if (a.done !== b.done) return a.done ? 1 : -1;
+        if (a.dueDate && b.dueDate) return a.dueDate.localeCompare(b.dueDate);
+        if (a.dueDate) return -1;
+        if (b.dueDate) return 1;
+        return 0;
+    });
+
+    if (sorted.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "reminder-empty";
+        empty.innerText = "Nessun compito in lista. Aggiungine uno qui sopra!";
+        list.appendChild(empty);
+    } else {
+        const fragment = document.createDocumentFragment();
+
+        sorted.forEach(reminder => {
+            const item = document.createElement("li");
+            item.className = "reminder-item" + (reminder.done ? " done" : "");
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = reminder.done;
+            checkbox.onchange = () => toggleReminder(reminder.id);
+
+            const text = document.createElement("span");
+            text.className = "reminder-text";
+            text.innerText = reminder.text;
+
+            item.appendChild(checkbox);
+            item.appendChild(text);
+
+            if (reminder.dueDate) {
+                const date = document.createElement("span");
+                date.className = "reminder-date";
+                date.innerText = "📅 " + formatReminderDate(reminder.dueDate);
+                item.appendChild(date);
+            }
+
+            const remove = document.createElement("button");
+            remove.className = "reminder-delete";
+            remove.innerText = "✕";
+            remove.onclick = () => deleteReminder(reminder.id);
+            item.appendChild(remove);
+
+            fragment.appendChild(item);
+        });
+
+        list.appendChild(fragment);
+    }
+
+    updateRemindersBadge();
+}
+
+function updateRemindersBadge() {
+    const badge = document.getElementById("remindersBadge");
+    const pending = reminders.filter(r => !r.done).length;
+
+    if (pending > 0) {
+        badge.innerText = pending;
+        badge.classList.remove("hidden");
+    } else {
+        badge.classList.add("hidden");
+    }
+}
+
+/* sistema dei file .SchoollAppunti aggiornato
+   Formato binario locale:
+   [MAGIC UTF-8][4 byte lunghezza manifest][manifest JSON UTF-8][PNG...]
+   Ora in questa maniera, lee immagini non vengono più trasformate in Base64
+   dentro un'enorme stringa.
+*/
+
+const SCHOOLNOTES_MAGIC = "SCHOOLNOTES_FILE_V1";
+const SCHOOLNOTES_EXTENSION = ".SchoollAppunti";
+const projectFileInput = document.getElementById("projectFileInput");
+
+function utf8Encode(text) {
+    return new TextEncoder().encode(text);
+}
+
+function utf8Decode(bytes) {
+    return new TextDecoder().decode(bytes);
+}
+
+function dataUrlToBytes(dataUrl) {
+    const commaIndex = dataUrl.indexOf(",");
+    if (commaIndex === -1) throw new Error("Data URL non valido.");
+
+    const base64 = dataUrl.substring(commaIndex + 1);
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+
+    return bytes;
+}
+
+function bytesToDataUrl(bytes, mimeType = "image/png") {
+    const chunkSize = 0x8000;
+    let binary = "";
+
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+        const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+        binary += String.fromCharCode(...chunk);
+    }
+
+    return `data:${mimeType};base64,${btoa(binary)}`;
+}
+
+function createProjectSnapshotForFile() {
+    const copiedFolders = JSON.parse(JSON.stringify(folders));
+    const images = [];
+
+    for (const folder of copiedFolders) {
+        if (!Array.isArray(folder.notes)) continue;
+
+        for (const note of folder.notes) {
+            if (!note.canvas || typeof note.canvas !== "string") continue;
+
+            const imageIndex = images.length;
+            images.push({
+                index: imageIndex,
+                bytes: dataUrlToBytes(note.canvas)
+            });
+
+            note.canvas = null;
+            note.canvasFile = imageIndex;
+        }
+    }
+
+    return {
+        manifest: {
+            format: "SCHOOL_NOTES_FILE",
+            version: 1,
+            createdAt: new Date().toISOString(),
+            currentFolderId,
+            currentNoteId,
+            folders: copiedFolders,
+            imageCount: images.length
+        },
+        images
+    };
+}
+
+async function exportProjectFile() {
+    if (currentNoteId) saveCurrentNote(true);
+
+    let project;
+
+    try {
+        project = createProjectSnapshotForFile();
+    } catch (error) {
+        console.error(error);
+        alert("Non è stato possibile preparare il file .SchoollAppunti. Il progetto potrebbe essere troppo grande per la memoria disponibile.");
+        return;
+    }
+
+    try {
+        const magicBytes = utf8Encode(SCHOOLNOTES_MAGIC);
+        const manifestBytes = utf8Encode(JSON.stringify(project.manifest));
+
+        const header = new ArrayBuffer(4);
+        new DataView(header).setUint32(0, manifestBytes.byteLength, true);
+
+        const parts = [magicBytes, new Uint8Array(header), manifestBytes];
+
+        for (const image of project.images) {
+            parts.push(image.bytes);
+        }
+
+        const blob = new Blob(parts, { type: "application/octet-stream" });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "SchoollAppunti-backup.SchoollAppunti";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        alert(`✅ Esportazione completata.\n\nFile: ${formatBytes(blob.size)}`);
+    } catch (error) {
+        console.error(error);
+        alert("Errore durante la creazione del file .SchoollAppunti. Il progetto potrebbe essere troppo grande per la memoria disponibile.");
+    }
+}
+
+function importProjectFile() {
+    projectFileInput.value = "";
+    projectFileInput.click();
+}
+
+projectFileInput.addEventListener("change", async event => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.name.toLowerCase().endsWith(SCHOOLNOTES_EXTENSION.toLowerCase())) {
+        alert("Seleziona un file .SchoollAppunti valido.");
+        return;
+    }
+
+    try {
+        await importProjectFromFile(file);
+    } catch (error) {
+        console.error(error);
+        alert("❌ Impossibile importare il file .SchoollAppunti.\n\nIl file potrebbe essere danneggiato o non appartenere a SchoollAppunti.");
+    }
+});
+
+async function importProjectFromFile(file) {
+    if (!confirm(
+        "Importando questo file verranno sostituiti i dati attualmente presenti.\n\n" +
+        "Vuoi continuare?"
+    )) return;
+
+    const buffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+    const magicBytes = utf8Encode(SCHOOLNOTES_MAGIC);
+
+    if (bytes.byteLength < magicBytes.byteLength + 4) {
+        throw new Error("File troppo piccolo.");
+    }
+
+    for (let i = 0; i < magicBytes.length; i++) {
+        if (bytes[i] !== magicBytes[i]) {
+            throw new Error("Formato .SchoollAppunti non riconosciuto.");
+        }
+    }
+
+    const view = new DataView(buffer);
+    const manifestLength = view.getUint32(magicBytes.length, true);
+
+    const manifestStart = magicBytes.length + 4;
+    const manifestEnd = manifestStart + manifestLength;
+
+    if (manifestEnd > bytes.byteLength) {
+        throw new Error("Manifest danneggiato.");
+    }
+
+    const manifestBytes = bytes.subarray(manifestStart, manifestEnd);
+    const manifest = JSON.parse(utf8Decode(manifestBytes));
+
+    if (
+        !manifest ||
+        manifest.format !== "SCHOOL_NOTES_FILE" ||
+        !Array.isArray(manifest.folders)
+    ) {
+        throw new Error("Questo non è un salvataggio SchoollAppunti valido.");
+    }
+
+    const imageStart = manifestEnd;
+    const imageCount = Number(manifest.imageCount || 0);
+
+    // Il file contiene le immagini una dopo l'altra.
+    // Per sapere dove finisce ogni PNG usiamo i marker PNG.
+    // Il PNG ha una struttura con chunk; qui estraiamo la dimensione
+    // leggendo i chunk fino a IEND.
+
+
+
+    const imageData = [];
+    let offset = imageStart;
+
+    for (let i = 0; i < imageCount; i++) {
+        const png = readPngFromBuffer(bytes, offset);
+
+        imageData.push(png.bytes);
+        offset = png.nextOffset;
+    }
+
+    // Ricostruisce i canvas come Data URL solo al momento dell'import.
+    // Il file .SchoollAppunti resta invece binario e non contiene Base64.
+    for (const folder of manifest.folders) {
+        if (!Array.isArray(folder.notes)) continue;
+
+        for (const note of folder.notes) {
+            if (Number.isInteger(note.canvasFile)) {
+                const image = imageData[note.canvasFile];
+
+                if (!image) {
+                    throw new Error("Immagine di una pagina mancante.");
+                }
+
+                note.canvas = bytesToDataUrl(image);
+                delete note.canvasFile;
+            } else {
+                note.canvas = note.canvas || null;
+            }
+        }
+    }
+
+    folders = JSON.parse(JSON.stringify(manifest.folders));
+    currentFolderId = manifest.currentFolderId || null;
+    currentNoteId = manifest.currentNoteId || null;
+
+    // La persistenza locale rimane compatibile con il sistema esistente.
+    // Se localStorage è pieno, il progetto importato anderà a restare comunque
+    // disponibile nella sessione corrente.
+    saveDatabase();
+    renderSidebar();
+
+    const validFolder = folders.find(folder => folder.id === currentFolderId);
+
+    if (!validFolder) {
+        currentFolderId = null;
+        currentNoteId = null;
+        resetCanvas();
+        setEditorEnabled(false);
+        noteTitle.value = "";
+    } else {
+        const notes = Array.isArray(validFolder.notes) ? validFolder.notes : [];
+        const validNote = notes.find(note => note.id === currentNoteId);
+
+        if (validNote) {
+            openNote(currentFolderId, currentNoteId);
+        } else {
+            currentNoteId = null;
+            selectFolder(currentFolderId);
+        }
+    }
+
+    alert(`✅ Importazione completata.\n\nFile: ${file.name}\nDimensione: ${formatBytes(file.size)}`);
+}
+
+function readPngFromBuffer(bytes, startOffset) {
+    // PNG signature
+    const signature = [
+        137, 80, 78, 71, 13, 10, 26, 10
+    ];
+
+    if (startOffset + signature.length > bytes.length) {
+        throw new Error("PNG incompleto.");
+    }
+
+    for (let i = 0; i < signature.length; i++) {
+        if (bytes[startOffset + i] !== signature[i]) {
+            throw new Error("Immagine PNG non valida nel file .SchoollAppunti.");
+        }
+    }
+
+    let offset = startOffset + 8;
+
+    while (offset + 12 <= bytes.length) {
+        const length =
+            (bytes[offset] << 24) |
+            (bytes[offset + 1] << 16) |
+            (bytes[offset + 2] << 8) |
+            bytes[offset + 3];
+
+        const type = String.fromCharCode(
+            bytes[offset + 4],
+            bytes[offset + 5],
+            bytes[offset + 6],
+            bytes[offset + 7]
+        );
+
+        if (length < 0) {
+            throw new Error("Dimensione PNG non valida.");
+        }
+
+        const chunkEnd = offset + 12 + length;
+
+        if (chunkEnd > bytes.length) {
+            throw new Error("PNG danneggiato o incompleto.");
+        }
+
+        offset = chunkEnd;
+
+        if (type === "IEND") {
+            return {
+                bytes: bytes.slice(startOffset, offset),
+                nextOffset: offset
+            };
+        }
+    }
+
+    throw new Error("Fine PNG non trovata.");
+}
+
+function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+    return (bytes / (1024 * 1024 * 1024)).toFixed(2) + " GB";
+}
+
+/* ===== AVVIO ===== */
+resetCanvas();
+setEditorEnabled(false);
+renderSidebar();
+updateRemindersBadge();
+</script>
+</body>
+</html>

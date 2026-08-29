@@ -1,0 +1,2022 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SchoollAppunti</title>
+
+<style>
+/*qeusto azzera i margini e i padding di defgualt del browser su titti gli elementi*/
+* { box-sizing: border-box; margin: 0; padding: 0; }
+/* Imposta il font, l'altezza a schermo intero e nasconde lo scroll della pagina */
+body { font-family: Arial, Helvetica, sans-serif; height: 100vh; overflow: hidden; background: #d8d8d8; }
+
+/* Layout principale a tre colonne: sidebar, area di lavoro, toolbar */
+.app { display: grid; grid-template-columns: 240px 1fr 220px; height: 100vh; }
+
+/* Sidebar sinistra con sfondo scuro */
+.sidebar { background: #202124; color: white; border-right: 1px solid #111; display: flex; flex-direction: column; overflow: hidden; }
+/* Intestazione della sidebar con il titolo dell'app */
+.sidebar-header { height: 60px; display: flex; align-items: center; padding: 0 18px; font-size: 20px; font-weight: bold; border-bottom: 1px solid #3b3b3b; }
+/* Contenitore della barra di ricerca */
+.search-area { padding: 10px 10px 0 10px; }
+/* Stile del campo di ricerca */
+.search-area input {
+    width: 100%; padding: 9px 10px; border-radius: 6px; border: 1px solid #3b3b3b;
+    background: #303134; color: white; font-size: 13px;
+}
+/* Colore del testo segnaposto nel campo di ricerca */
+.search-area input::placeholder { color: #999; }
+/* Area scrollabile che contiene l'elenco di materie e appunti */
+.folder-area { flex: 1; overflow-y: auto; padding: 10px; }
+
+/* Spaziatura tra una materia e l'altra */
+.folder { margin-bottom: 5px; }
+/* Riga cliccabile con il nome della materia */
+.folder-header { display: flex; align-items: center; gap: 8px; padding: 9px; border-radius: 6px; cursor: pointer; user-select: none; }
+/* Effetto al passaggio del mouse sulla materia */
+.folder-header:hover { background: #303134; }
+/* Sfondo della materia attualmente selezionata */
+.folder-header.active { background: #3c4043; }
+/* Il nome della materia quando si mettono più caratteri di quelli visibili non va a capo, viene troncato con i puntini alla finepp */
+.folder-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Rientro degli appunti sotto la relativa materia */
+.notes { padding-left: 24px; }
+/* Riga di un singolo appunto nell'elenco */
+.note { display: flex; align-items: center; padding: 7px; border-radius: 5px; cursor: pointer; color: #ddd; font-size: 14px; }
+/* Effetto al passaggio del mouse su un appunto */
+.note:hover { background: #303134; }
+/* Sfondo dell'appunto attualmente aperto */
+.note.active { background: #4a4d51; color: white; }
+/* Il nome dell'appunto non va a capo, viene troncato con i puntini */
+.note-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Messaggio mostrato quando non ci sono ancora materie create */
+.empty-message { color: #999; font-size: 13px; padding: 10px; line-height: 1.5; }
+
+/* Piede della sidebar con il pulsante dei promemoria */
+.sidebar-footer { border-top: 1px solid #3b3b3b; padding: 10px; }
+/* Stile del pulsante che apre la finestra dei promemoria */
+.reminders-button {
+    width: 100%; border: none; background: #0e7490; color: white; padding: 10px;
+    border-radius: 6px; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: space-between;
+}
+/* Effetto al passaggio del mouse sul pulsante promemoria */
+.reminders-button:hover { background: #0891b2; }
+/* Pallino rosso con il numero di promemoria non completati */
+.reminders-badge {
+    background: #dc2626; color: white; border-radius: 999px; padding: 1px 7px; font-size: 11px; font-weight: bold;
+}
+
+/* Colonna centrale dove si trova il foglio di lavoro */
+.workspace { display: flex; flex-direction: column; background: #cfcfcf; overflow: hidden; position: relative; }
+
+/* Barra superiore con titolo appunto e pulsanti azione */
+.topbar { min-height: 60px; background: white; border-bottom: 1px solid #bbb; display: flex; align-items: center; gap: 8px; padding: 0 15px; z-index: 20; flex-wrap: nowrap; overflow-x: auto; }
+/* Campo di testo del titolo dell'appunto */
+.note-title { flex: 1; min-width: 100px; border: none; outline: none; font-size: 18px; font-weight: bold; }
+
+/* Stile generico dei pulsanti della barra superiore */
+.top-button { border: none; background: #eeeeee; padding: 9px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; white-space: nowrap; }
+/* Effetto al passaggio del mouse sui pulsanti generici */
+.top-button:hover { background: #ddd; }
+/* Colore specifico del pulsante Salva */
+.save-button { background: #2563eb; color: white; }
+.save-button:hover { background: #1d4ed8; }
+/* Colore specifico del pulsante Nuova pagina */
+.new-page-button { background: #16a34a; color: white; }
+.new-page-button:hover { background: #15803d; }
+/* Colore specifico del pulsante Esporta progetto */
+.export-button { background: #7c3aed; color: white; }
+.export-button:hover { background: #6d28d9; }
+/* Colore specifico del pulsante Importa progetto */
+.import-button { background: #ea580c; color: white; }
+.import-button:hover { background: #c2410c; }
+/* Colore specifico del pulsante Esporta PNG */
+.png-button { background: #0e7490; color: white; }
+.png-button:hover { background: #0891b2; }
+
+/* Contenitore delle frecce di navigazione tra le pagine */
+.page-nav { display: flex; align-items: center; gap: 4px; }
+/* Testo che mostra il numero di pagina corrente */
+.page-indicator { font-size: 12px; color: #555; white-space: nowrap; padding: 0 4px; }
+
+/* Scritta verde del salvataggio automatico, nascosta di default */
+.autosave-indicator {
+    font-size: 12px; color: #16a34a; opacity: 0; transition: opacity 0.4s ease; white-space: nowrap;
+}
+/* Rende visibile la scritta del salvataggio automatico */
+.autosave-indicator.show { opacity: 1; }
+
+/* Area scrollabile che contiene il foglio bianco */
+.canvas-container { flex: 1; overflow-y: auto; overflow-x: auto; padding: 35px; display: flex; justify-content: center; align-items: flex-start; position: relative; }
+/* Il foglio bianco vero e proprio */
+#canvas { background: white; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.20); flex-shrink: 0; }
+/* Aspetto del foglio quando nessun appunto è aperto */
+#canvas.disabled { cursor: not-allowed; opacity: 0.45; }
+/* Puntatore a forma di "I" quando lo strumento attivo è la scrittura */
+#canvas.tool-text { cursor: text; }
+/* Puntatore a forma di freccia quando lo strumento attivo non è la scrittura */
+#canvas.tool-other { cursor: default; }
+
+/* Colonna destra con gli strumenti di disegno */
+.toolbar { background: #202124; color: white; border-left: 1px solid #111; padding: 12px; overflow-y: auto; }
+/* Titolo in cima alla toolbar */
+.tool-title { font-weight: bold; margin-bottom: 15px; }
+/* Spaziatura tra un gruppo di strumenti e l'altro */
+.tool-group { margin-bottom: 18px; }
+/* Etichetta grigia sopra ogni gruppo di strumenti */
+.tool-label { display: block; font-size: 12px; color: #aaa; margin-bottom: 6px; }
+
+/* Stile dei pulsanti degli strumenti */
+.tool-button { width: 100%; border: none; background: #303134; color: white; padding: 9px; border-radius: 6px; cursor: pointer; margin-bottom: 5px; text-align: left; }
+/* Effetto al passaggio del mouse su un pulsante strumento */
+.tool-button:hover { background: #414246; }
+/* Sfondo dello strumento attualmente selezionato */
+.tool-button.active { background: #2563eb; }
+
+/* Stile comune dei menu a tendina e dei campi numerici */
+select, input[type="number"] { width: 100%; padding: 8px; border-radius: 5px; border: none; margin-bottom: 5px; }
+/* Stile del selettore colore */
+input[type="color"] { width: 100%; height: 38px; border: none; padding: 0; cursor: pointer; }
+
+/* Riquadro mostrato al centro quando l'editor è bloccato */
+.editor-disabled-message {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, .95); padding: 25px 35px; border-radius: 10px;
+    text-align: center; box-shadow: 0 5px 20px rgba(0, 0, 0, .15); z-index: 10; color: #555;
+}
+/* Testo in grassetto dentro il riquadro di editor bloccato */
+.editor-disabled-message strong { display: block; color: #222; font-size: 18px; margin-bottom: 8px; }
+
+/* Menu contestuale (tasto destro) nascosto di default */
+.context-menu {
+    position: fixed; background: white; border: 1px solid #bbb; box-shadow: 0 5px 15px rgba(0, 0, 0, .25);
+    border-radius: 6px; padding: 5px; display: none; z-index: 200;
+}
+/* Ogni voce del menu contestuale */
+.context-menu button { display: block; width: 180px; padding: 9px; border: none; background: white; text-align: left; cursor: pointer; }
+/* Effetto al passaggio del mouse su una voce del menu contestuale */
+.context-menu button:hover { background: #eee; }
+
+/* Sfondo scuro semitrasparente dietro ai modali */
+.modal-background {
+    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55); display: none;
+    align-items: center; justify-content: center; z-index: 100;
+}
+/* Rende visibile il modale quando ha la classe show */
+.modal-background.show { display: flex; }
+/* Riquadro bianco del modale */
+.modal { background: white; width: min(700px, 90vw); max-height: 80vh; overflow-y: auto; border-radius: 10px; padding: 25px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
+/* Spaziatura dei titoli dentro al modale */
+.modal h2 { margin-bottom: 15px; }
+.modal h3 { margin-top: 20px; margin-bottom: 8px; }
+/* Spaziatura dei paragrafi e degli elenchi dentro al modale */
+.modal p, .modal li { line-height: 1.5; margin-bottom: 10px; }
+/* Pulsante per chiudere il modale */
+.close-modal { float: right; border: none; background: #eee; padding: 7px 12px; border-radius: 5px; cursor: pointer; }
+
+/* Classe usata per nascondere completamente un elemento */
+.hidden { display: none !important; }
+
+/* Riga con i campi per aggiungere un nuovo promemoria */
+.reminder-form { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+/* Campo di testo del promemoria */
+.reminder-form input[type="text"] {
+    flex: 2; min-width: 150px; padding: 9px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px;
+}
+/* Campo data del promemoria */
+.reminder-form input[type="date"] {
+    flex: 1; min-width: 130px; padding: 9px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px;
+}
+/* Pulsante per aggiungere il promemoria */
+.reminder-form button {
+    border: none; background: #16a34a; color: white; padding: 9px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;
+}
+.reminder-form button:hover { background: #15803d; }
+
+/* Elenco dei promemoria senza i pallini di default */
+.reminder-list { list-style: none; }
+/* Riga di un singolo promemoria */
+.reminder-item {
+    display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px;
+    border: 1px solid #eee; margin-bottom: 8px;
+}
+/* Aspetto sbiadito di un promemoria già completato */
+.reminder-item.done { opacity: 0.5; }
+/* Testo barrato per i promemoria completati */
+.reminder-item.done .reminder-text { text-decoration: line-through; }
+/* Il testo del promemoria occupa lo spazio rimanente */
+.reminder-text { flex: 1; }
+/* Data del promemoria, mostrata in piccolo e grigio */
+.reminder-date { font-size: 12px; color: #888; white-space: nowrap; }
+/* Pulsante rosso per eliminare un promemoria */
+.reminder-delete { border: none; background: #fee2e2; color: #b91c1c; padding: 6px 10px; border-radius: 5px; cursor: pointer; }
+.reminder-delete:hover { background: #fecaca; }
+/* Messaggio mostrato quando la lista dei promemoria è vuota */
+.reminder-empty { color: #999; font-size: 14px; padding: 10px 0; }
+
+/* Adattamento del layout su schermi medi: nasconde la toolbar destra */
+@media (max-width: 1100px) {
+    .app { grid-template-columns: 200px 1fr; }
+    .toolbar { display: none; }
+}
+/* Adattamento del layout su schermi piccoli */
+@media (max-width: 700px) {
+    .topbar { overflow-x: auto; }
+    .note-title { min-width: 150px; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+    <!-- Colonna sinistra con materie e appunti -->
+    <aside class="sidebar">
+        <div class="sidebar-header">📚 SchoollAppunti</div>
+        <div class="search-area">
+            <input id="searchInput" type="text" placeholder="🔍 Cerca appunti...">
+        </div>
+        <div id="folderArea" class="folder-area"></div>
+        <div class="sidebar-footer">
+            <button class="reminders-button" onclick="openReminders()">
+                <span>📌 Compiti / Promemoria</span>
+                <span id="remindersBadge" class="reminders-badge hidden">0</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Colonna centrale con il foglio -->
+    <main class="workspace">
+        <div class="topbar">
+            <input id="noteTitle" class="note-title" placeholder="Nessun appunto selezionato" disabled>
+            <div class="page-nav">
+                <button class="top-button" onclick="goToPage(navPage - 1)">◀</button>
+                <span id="pageIndicator" class="page-indicator">Pag. 1/1</span>
+                <button class="top-button" onclick="goToPage(navPage + 1)">▶</button>
+            </div>
+            <button class="top-button" onclick="newNote()">➕ Nuovo</button>
+            <button id="newPageButton" class="top-button new-page-button" onclick="createNewPage()">📄 Nuova pagina</button>
+            <button class="top-button save-button" onclick="saveCurrentNote()">💾 Salva</button>
+            <button class="top-button png-button" onclick="exportAsImage()">🖼️ Esporta PNG</button>
+            <button class="top-button export-button" onclick="exportProjectFile()">📦 Esporta .SchoollAppunti</button>
+            <button class="top-button import-button" onclick="importProjectFile()">📥 Importa .SchoollAppunti</button>
+            <input id="projectFileInput" type="file" accept=".SchoollAppunti,application/octet-stream" style="display:none">
+            <span id="autosaveIndicator" class="autosave-indicator">✓ Salvato automaticamente</span>
+        </div>
+
+        <div id="canvasContainer" class="canvas-container">
+            <canvas id="canvas" width="900" height="1100" class="disabled tool-text"></canvas>
+            <div id="disabledMessage" class="editor-disabled-message">
+                <strong>📄 Nessun appunto aperto</strong>
+                <span>Crea una materia e premi <b>➕ Nuovo</b> per iniziare.</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Colonna destra con gli strumenti -->
+    <aside class="toolbar">
+        <div class="tool-title">🛠 Strumenti</div>
+
+        <div class="tool-group">
+            <div class="tool-label">TESTO</div>
+            <button id="textTool" class="tool-button active" onclick="setTool('text')">🔤 Scrittura</button>
+            <label class="tool-label">Font</label>
+            <select id="fontFamily">
+                <option>Arial</option>
+                <option>Verdana</option>
+                <option>Times New Roman</option>
+                <option>Georgia</option>
+                <option>Courier New</option>
+                <option>Comic Sans MS</option>
+            </select>
+            <label class="tool-label">Dimensione</label>
+            <input id="fontSize" type="number" min="8" max="80" value="24">
+        </div>
+
+        <div class="tool-group">
+            <div class="tool-label">DISEGNO</div>
+            <button id="penTool" class="tool-button" onclick="setTool('pen')">✏️ Matita</button>
+            <button id="highlighterTool" class="tool-button" onclick="setTool('highlighter')">🖍️ Evidenziatore</button>
+            <button id="eraserTool" class="tool-button" onclick="setTool('eraser')">🧽 Gomma</button>
+            <label class="tool-label">Colore</label>
+            <input id="colorPicker" type="color" value="#000000">
+            <label class="tool-label">Spessore</label>
+            <input id="lineWidth" type="number" min="1" max="50" value="4">
+        </div>
+
+        <div class="tool-group">
+            <div class="tool-label">FORME</div>
+            <button id="rectangleTool" class="tool-button" onclick="setTool('rectangle')">▭ Rettangolo</button>
+            <button id="circleTool" class="tool-button" onclick="setTool('circle')">◯ Cerchio</button>
+            <button id="triangleTool" class="tool-button" onclick="setTool('triangle')">△ Triangolo</button>
+            <button id="lineTool" class="tool-button" onclick="setTool('line')">╱ Linea</button>
+        </div>
+
+        <div class="tool-group">
+            <div class="tool-label">IMMAGINI</div>
+            <button id="imageTool" class="tool-button" onclick="imageInput.click()">🖼️ Importa immagine</button>
+            <input id="imageInput" type="file" accept="image/*" style="display:none">
+        </div>
+
+        <div class="tool-group">
+            <div class="tool-label">AZIONI</div>
+            <button class="tool-button" onclick="undo()">↩️ Annulla</button>
+            <button class="tool-button" onclick="clearCurrentNote()">🗑️ Cancella tutto</button>
+            <button class="tool-button" onclick="showHelp()">❓ Come funziona?</button>
+        </div>
+    </aside>
+</div>
+
+<!-- Finestra di aiuto -->
+<div id="helpModal" class="modal-background">
+    <div class="modal">
+        <button class="close-modal" onclick="closeHelp()">✕</button>
+        <p>Programma creato da Davide Franzella</p>
+        <h2>📚 Come funziona SchoollAppunti</h2>
+        <p>Ogni materia contiene i propri appunti. Ogni appunto può contenere più pagine.</p>
+
+        <h3>📁 Materie</h3>
+        <p>Fai click destro nella barra sinistra per creare una nuova materia.</p>
+
+        <h3>📝 Appunti</h3>
+        <p>Seleziona una materia e premi <b>Nuovo</b> per creare un appunto. Fai click destro su un appunto per rinominarlo o eliminarlo.</p>
+
+        <h3>🔍 Ricerca</h3>
+        <p>Usa la barra di ricerca in alto nella sidebar per trovare velocemente un appunto per nome.</p>
+
+        <h3>✍️ Scrittura</h3>
+        <p>Dopo aver creato un appunto puoi cliccare sul foglio e scrivere/disegnare ecc... direttamente in qualsiasi punto del foglio</p>
+
+        <h3>📄 Pagine</h3>
+        <p>Le pagine non vengono create automaticamente. Premi <b>📄 Nuova pagina</b> per aggiungere una nuova pagina allo stesso appunto. Usa le frecce ◀ ▶ in alto per spostarti tra le pagine già create.</p>
+
+        <h3>💾 Salvataggio locale e automatico</h3>
+        <p>Prima di cambiare cartella, salva sempre prima di cambiare cartella, a volte può succedere che non salvi automaticamente delle cose. Il pulsante <b>Salva</b> salva il progetto nel browser del dispositivo. L'app salva automaticamente ogni 30 secondi mentre lavori su un appunto.</p>
+
+        <h3>📦 File .SchoollAppunti</h3>
+        <p>Il pulsante <b>Esporta .SchoollAppunti</b> crea un file contenente tutto il progetto, comprese le pagine e le immagini.</p>
+        <p>Puoi conservare il file e trasferirlo su un altro dispositivo o usarlo nello stesso dispositivo se hai perso i dati, hai fatto un reset, ecc... con <b>📥 Importa .SchoollAppunti</b> appunto, puoi ripristinare i dati dei tuoi progetti e anche condividerli se vuoi.</p>
+
+        <h3>🖼️ Esporta PNG</h3>
+        <p>Salva l'appunto aperto come singola immagine PNG, comoda da inviare o stampare.</p>
+
+        <h3>📌 Compiti / Promemoria</h3>
+        <p>Dal pulsante in basso a sinistra puoi tenere una lista di compiti con eventuale scadenza, separata dagli appunti.</p>
+
+        <h3>⌫ Backspace</h3>
+        <p>Quando stai scrivendo, il tasto Backspace elimina l'ultimo carattere scritto.</p>
+
+        <h3>✏️ Disegno</h3>
+        <p>Seleziona la matita e disegna direttamente sul foglio.</p>
+
+        <h3>🖍️ Evidenziatore</h3>
+        <p>L'evidenziatore è semi-trasparente, quindi il testo rimane visibile.</p>
+
+        <h3>🌐 Offline</h3>
+        <p>SchoollAppunti funziona interamente offline: non contatta nessun server e non richiede connessione a internet, nemmeno per i font o le icone. Questo vale ovviamente solo se il file viene scaricato ed eseguito in locale sul computer.</p>
+    </div>
+</div>
+
+<!-- Finestra dei promemoria -->
+<div id="remindersModal" class="modal-background">
+    <div class="modal">
+        <button class="close-modal" onclick="closeReminders()">✕</button>
+        <h2>📌 Compiti / Promemoria</h2>
+        <div class="reminder-form">
+            <input id="reminderText" type="text" placeholder="Es: Studiare storia cap. 5">
+            <input id="reminderDate" type="date">
+            <button onclick="addReminder()">➕ Aggiungi</button>
+        </div>
+        <ul id="reminderList" class="reminder-list"></ul>
+    </div>
+</div>
+
+<!-- Menu contestuale (tasto destro) -->
+<div id="contextMenu" class="context-menu"></div>
+
+<script>
+/* Riferimento al foglio e al suo contesto di disegno 2D */
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+/* Riferimenti agli altri elementi principali dell'interfaccia */
+const folderArea = document.getElementById("folderArea");
+const noteTitle = document.getElementById("noteTitle");
+const disabledMessage = document.getElementById("disabledMessage");
+const contextMenu = document.getElementById("contextMenu");
+const canvasContainer = document.getElementById("canvasContainer");
+const searchInput = document.getElementById("searchInput");
+const pageIndicator = document.getElementById("pageIndicator");
+const autosaveIndicator = document.getElementById("autosaveIndicator");
+
+/* Riferimenti ai controlli della toolbar */
+const colorPicker = document.getElementById("colorPicker");
+const lineWidthInput = document.getElementById("lineWidth");
+const fontFamily = document.getElementById("fontFamily");
+const fontSize = document.getElementById("fontSize");
+const imageInput = document.getElementById("imageInput");
+const textTool = document.getElementById("textTool");
+const helpModal = document.getElementById("helpModal");
+const remindersModal = document.getElementById("remindersModal");
+
+/* Dimensioni fisse di una singola pagina del foglio, in pixel */
+const PAGE_WIDTH = 900;
+const PAGE_HEIGHT = 1100;
+/* Spazio vuoto tra una pagina e la successiva */
+const PAGE_GAP = 50;
+
+/* Margini interni della pagina entro cui si può scrivere */
+const MARGIN_LEFT = 60;
+const MARGIN_TOP = 80;
+const MARGIN_RIGHT = 60;
+const MARGIN_BOTTOM = 70;
+
+/* Numero massimo di stati salvati nella cronologia per l'undo */
+const MAX_HISTORY = 50;
+/* Nomi delle modalità di composizione del canvas, usati per disegnare o cancellare */
+const SOURCE_OVER = "source-over";
+const DESTINATION_OUT = "destination-out";
+
+/* Elenco delle materie, caricato dal localStorage del browser */
+let folders = [];
+try {
+    /* Prova a leggere i dati salvati in precedenza */
+    folders = JSON.parse(localStorage.getItem("schoolNotesFolders") || "[]");
+    /* Se il dato letto non è un array valido, riparte da un elenco vuoto */
+    if (!Array.isArray(folders)) folders = [];
+} catch (error) {
+    /* In caso di dati corrotti, segnala l'errore in console e riparte da zero */
+    console.error("Errore caricamento database:", error);
+    folders = [];
+}
+
+/* ID della materia e dell'appunto attualmente aperti */
+let currentFolderId = null;
+let currentNoteId = null;
+
+/* Elenco dei promemoria, caricato dal localStorage del browser */
+let reminders = [];
+try {
+    /* Prova a leggere i promemoria salvati in precedenza */
+    reminders = JSON.parse(localStorage.getItem("schoolNotesReminders") || "[]");
+    /* Se il dato letto non è un array valido, riparte da un elenco vuoto */
+    if (!Array.isArray(reminders)) reminders = [];
+} catch (error) {
+    /* In caso di dati corrotti, segnala l'errore in console e riparte da zero */
+    console.error("Errore caricamento promemoria:", error);
+    reminders = [];
+}
+
+/* Strumento di disegno attualmente selezionato */
+let currentTool = "text";
+/* Indica se in questo momento si sta trascinando il mouse per disegnare */
+let isDrawing = false;
+/* Coordinate del punto in cui è iniziato un disegno (rettangolo, linea, ecc.) */
+let startX = 0, startY = 0;
+/* Posizione del cursore di scrittura sul foglio */
+let cursorX = MARGIN_LEFT, cursorY = MARGIN_TOP;
+/* Numero della pagina in cui si trova il cursore di scrittura */
+let currentPage = 0;
+/* Numero della pagina attualmente mostrata a schermo durante la navigazione */
+let navPage = 0;
+/* Immagine in attesa di essere posizionata sul foglio con un click */
+let pendingImage = null;
+/* Cronologia delle azioni, usata per undo e backspace */
+let history = [];
+/* Testo di ricerca corrente nella sidebar */
+let searchQuery = "";
+/* Riferimento al timer del salvataggio automatico */
+let autosaveTimer = null;
+/* Riferimento al timer che nasconde la scritta di salvataggio automatico */
+let autosaveHideTimer = null;
+
+/* Genera un identificativo univoco combinando data attuale e un numero casuale */
+function generateId() {
+    return Date.now().toString() + Math.random().toString(36).substring(2);
+}
+
+/* Salva l'elenco delle materie e degli appunti nel localStorage */
+function saveDatabase() {
+    try {
+        /* Converte l'elenco in testo JSON e lo scrive nel browser */
+        localStorage.setItem("schoolNotesFolders", JSON.stringify(folders));
+        return true;
+    } catch (error) {
+        /* Se lo spazio disponibile non basta, avvisa l'utente */
+        console.error(error);
+        alert("Non è stato possibile salvare localmente. Il progetto potrebbe essere troppo grande per il localStorage.");
+        return false;
+    }
+}
+
+/* Riporta il foglio a una singola pagina bianca vuota */
+function resetCanvas() {
+    /* Imposta le dimensioni del foglio a quelle di una singola pagina */
+    canvas.width = PAGE_WIDTH;
+    canvas.height = PAGE_HEIGHT;
+
+    /* Riempie il foglio di bianco */
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
+
+    /* Riporta il cursore di scrittura in alto a sinistra */
+    cursorX = MARGIN_LEFT;
+    cursorY = MARGIN_TOP;
+    /* Riporta la pagina corrente e quella visualizzata alla prima */
+    currentPage = 0;
+    navPage = 0;
+    /* Svuota la cronologia, dato che si parte da un foglio nuovo */
+    history = [];
+
+    /* Riporta le impostazioni di disegno del contesto ai valori normali */
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = SOURCE_OVER;
+    ctx.textAlign = "left";
+
+    /* Aggiorna il numero di pagina mostrato in alto */
+    updatePageIndicator();
+}
+
+/* Abilita o disabilita l'editor a seconda che ci sia o meno un appunto aperto */
+function setEditorEnabled(enabled) {
+    /* Aggiunge o toglie la classe che rende il foglio grigio e non cliccabile */
+    canvas.classList.toggle("disabled", !enabled);
+    /* Mostra o nasconde il messaggio "nessun appunto aperto" */
+    disabledMessage.classList.toggle("hidden", enabled);
+    /* Abilita o disabilita il campo del titolo dell'appunto */
+    noteTitle.disabled = !enabled;
+}
+
+/* Aggiorna la classe del cursore del foglio in base allo strumento selezionato */
+function updateCanvasCursor() {
+    /* Con lo strumento di scrittura il puntatore diventa una "I" */
+    const isTextTool = currentTool === "text";
+    canvas.classList.toggle("tool-text", isTextTool);
+    /* Con qualsiasi altro strumento il puntatore torna una normale freccia */
+    canvas.classList.toggle("tool-other", !isTextTool);
+}
+
+/* Aggiorna la ricerca ogni volta che l'utente scrive nella barra di ricerca */
+searchInput.addEventListener("input", () => {
+    /* Salva il testo digitato in minuscolo, senza spazi ai lati */
+    searchQuery = searchInput.value.trim().toLowerCase();
+    /* Ridisegna la sidebar applicando il filtro */
+    renderSidebar();
+});
+
+/* Ridisegna l'intera sidebar con le materie e gli appunti */
+function renderSidebar() {
+    /* Svuota la sidebar prima di ricostruirla */
+    folderArea.replaceChildren();
+
+    /* Se non ci sono materie, mostra un messaggio guida */
+    if (folders.length === 0) {
+        const message = document.createElement("div");
+        message.className = "empty-message";
+        message.innerHTML = "Fai click destro qui<br>per creare una materia.";
+        folderArea.appendChild(message);
+        return;
+    }
+
+    /* Contenitore temporaneo per costruire la lista prima di inserirla nel DOM */
+    const fragment = document.createDocumentFragment();
+
+    /* Per ogni materia, crea la riga corrispondente */
+    folders.forEach(folder => {
+        const folderElement = document.createElement("div");
+        folderElement.className = "folder";
+
+        /* Riga cliccabile con icona e nome della materia */
+        const header = document.createElement("div");
+        header.className = "folder-header";
+        /* Evidenzia la materia se è quella attualmente selezionata */
+        if (folder.id === currentFolderId) header.classList.add("active");
+
+        const icon = document.createElement("span");
+        icon.innerText = "📁";
+
+        const name = document.createElement("span");
+        name.className = "folder-name";
+        name.innerText = folder.name;
+
+        header.appendChild(icon);
+        header.appendChild(name);
+        /* Al click, seleziona questa materia */
+        header.onclick = () => selectFolder(folder.id);
+        /* Al click destro, apre il menu rinomina/elimina */
+        header.oncontextmenu = event => {
+            event.preventDefault();
+            showFolderMenu(event, folder);
+        };
+
+        folderElement.appendChild(header);
+
+        /* Contenitore degli appunti di questa materia */
+        const notes = document.createElement("div");
+        notes.className = "notes";
+
+        if (Array.isArray(folder.notes)) {
+            const notesFragment = document.createDocumentFragment();
+
+            /* Per ogni appunto della materia, crea la riga corrispondente */
+            folder.notes.forEach(note => {
+                /* Se c'è un filtro di ricerca attivo, salta gli appunti che non corrispondono */
+                if (searchQuery && !(note.title || "").toLowerCase().includes(searchQuery)) return;
+
+                const noteElement = document.createElement("div");
+                noteElement.className = "note";
+                /* Evidenzia l'appunto se è quello attualmente aperto */
+                if (note.id === currentNoteId) noteElement.classList.add("active");
+
+                const noteName = document.createElement("span");
+                noteName.className = "note-name";
+                noteName.innerText = "📄 " + (note.title || "Appunto senza nome");
+
+                noteElement.appendChild(noteName);
+                /* Al click, apre questo appunto */
+                noteElement.onclick = () => openNote(folder.id, note.id);
+                /* Al click destro, apre il menu rinomina/elimina */
+                noteElement.oncontextmenu = event => {
+                    event.preventDefault();
+                    showNoteMenu(event, folder, note);
+                };
+
+                notesFragment.appendChild(noteElement);
+            });
+
+            notes.appendChild(notesFragment);
+        }
+
+        folderElement.appendChild(notes);
+        fragment.appendChild(folderElement);
+    });
+
+    /* Inserisce tutta la lista costruita nella sidebar in un colpo solo */
+    folderArea.appendChild(fragment);
+}
+
+/* Mostra il menu contestuale di una materia (rinomina/elimina) */
+function showFolderMenu(event, folder) {
+    /* Svuota il menu prima di riempirlo con le voci giuste */
+    contextMenu.replaceChildren();
+
+    const rename = document.createElement("button");
+    rename.innerText = "✏️ Rinomina";
+    rename.onclick = () => {
+        /* Chiede il nuovo nome tramite una finestra di dialogo del browser */
+        const name = prompt("Nuovo nome:", folder.name);
+        if (name) {
+            folder.name = name;
+            saveDatabase();
+            renderSidebar();
+        }
+    };
+
+    const remove = document.createElement("button");
+    remove.innerText = "🗑️ Elimina";
+    remove.onclick = () => {
+        /* Chiede conferma prima di eliminare la materia e tutti i suoi appunti */
+        if (!confirm("Eliminare questa materia e tutti i suoi appunti?")) return;
+
+        /* Toglie la materia dall'elenco */
+        folders = folders.filter(f => f.id !== folder.id);
+
+        /* Se la materia eliminata era quella aperta, chiude l'editor */
+        if (currentFolderId === folder.id) {
+            currentFolderId = null;
+            currentNoteId = null;
+            noteTitle.value = "";
+            resetCanvas();
+            setEditorEnabled(false);
+        }
+
+        saveDatabase();
+        renderSidebar();
+    };
+
+    contextMenu.appendChild(rename);
+    contextMenu.appendChild(remove);
+    /* Posiziona il menu esattamente dove è stato fatto il click destro */
+    contextMenu.style.left = event.clientX + "px";
+    contextMenu.style.top = event.clientY + "px";
+    contextMenu.style.display = "block";
+}
+
+/* Mostra il menu contestuale di un appunto (rinomina/elimina) */
+function showNoteMenu(event, folder, note) {
+    /* Svuota il menu prima di riempirlo con le voci giuste */
+    contextMenu.replaceChildren();
+
+    const rename = document.createElement("button");
+    rename.innerText = "✏️ Rinomina";
+    rename.onclick = () => {
+        /* Chiede il nuovo nome dell'appunto */
+        const name = prompt("Nuovo nome dell'appunto:", note.title);
+        if (name) {
+            note.title = name;
+            /* Se l'appunto rinominato è quello aperto, aggiorna anche il campo titolo */
+            if (note.id === currentNoteId) noteTitle.value = name;
+            saveDatabase();
+            renderSidebar();
+        }
+    };
+
+    const remove = document.createElement("button");
+    remove.innerText = "🗑️ Elimina";
+    remove.onclick = () => {
+        /* Chiede conferma prima di eliminare l'appunto */
+        if (!confirm("Eliminare questo appunto?")) return;
+
+        /* Toglie l'appunto dalla materia */
+        folder.notes = folder.notes.filter(n => n.id !== note.id);
+
+        /* Se l'appunto eliminato era quello aperto, chiude l'editor */
+        if (currentNoteId === note.id) {
+            currentNoteId = null;
+            noteTitle.value = "";
+            resetCanvas();
+            setEditorEnabled(false);
+        }
+
+        saveDatabase();
+        renderSidebar();
+    };
+
+    contextMenu.appendChild(rename);
+    contextMenu.appendChild(remove);
+    /* Posiziona il menu esattamente dove è stato fatto il click destro */
+    contextMenu.style.left = event.clientX + "px";
+    contextMenu.style.top = event.clientY + "px";
+    contextMenu.style.display = "block";
+}
+
+/* Click destro sull'area della sidebar, fuori da materie e appunti, per creare una nuova materia */
+folderArea.addEventListener("contextmenu", event => {
+    event.preventDefault();
+    /* Se il click destro è avvenuto su una materia o un appunto, non fare nulla qui */
+    if (event.target.closest(".folder-header") || event.target.closest(".note")) return;
+
+    contextMenu.replaceChildren();
+
+    const button = document.createElement("button");
+    button.innerText = "📁 Nuova materia";
+    button.onclick = createFolder;
+
+    contextMenu.appendChild(button);
+    contextMenu.style.left = event.clientX + "px";
+    contextMenu.style.top = event.clientY + "px";
+    contextMenu.style.display = "block";
+});
+
+/* Chiude il menu contestuale se si clicca in un punto qualsiasi fuori da esso */
+document.addEventListener("click", event => {
+    if (!event.target.closest(".context-menu")) contextMenu.style.display = "none";
+});
+
+/* Crea una nuova materia chiedendo il nome all'utente */
+function createFolder() {
+    contextMenu.style.display = "none";
+
+    const name = prompt("Nome della materia:");
+    if (!name) return;
+
+    /* Crea l'oggetto materia con un elenco di appunti vuoto */
+    const folder = { id: generateId(), name: name, notes: [] };
+    folders.push(folder);
+
+    saveDatabase();
+    renderSidebar();
+    /* Seleziona subito la materia appena creata */
+    selectFolder(folder.id);
+}
+
+/* Seleziona una materia esistente, senza aprire nessun appunto */
+function selectFolder(id) {
+    currentFolderId = id;
+    currentNoteId = null;
+    noteTitle.value = "";
+
+    resetCanvas();
+    setEditorEnabled(false);
+    renderSidebar();
+}
+
+/* Crea un nuovo appunto dentro la materia attualmente selezionata */
+function newNote() {
+    /* Serve prima aver scelto una materia */
+    if (!currentFolderId) {
+        alert("Prima devi creare o selezionare una materia.");
+        return;
+    }
+
+    const title = prompt("Nome dell'appunto:");
+    if (!title) return;
+
+    const folder = folders.find(f => f.id === currentFolderId);
+    if (!folder) return;
+
+    /* Se la materia non ha ancora un elenco di appunti, lo crea */
+    if (!Array.isArray(folder.notes)) folder.notes = [];
+
+    /* Crea il nuovo appunto con il foglio ancora vuoto */
+    const note = {
+        id: generateId(), title: title, canvas: null,
+        cursorX: MARGIN_LEFT, cursorY: MARGIN_TOP, currentPage: 0
+    };
+
+    folder.notes.push(note);
+    currentNoteId = note.id;
+
+    noteTitle.value = title;
+    resetCanvas();
+    setEditorEnabled(true);
+
+    saveDatabase();
+    renderSidebar();
+}
+
+/* Apre un appunto esistente, caricandone il contenuto salvato */
+function openNote(folderId, noteId) {
+    currentFolderId = folderId;
+    currentNoteId = noteId;
+
+    const folder = folders.find(f => f.id === folderId);
+    if (!folder) return;
+
+    const note = folder.notes.find(n => n.id === noteId);
+    if (!note) return;
+
+    noteTitle.value = note.title || "Appunto senza nome";
+    /* Disabilita temporaneamente l'editor finché il contenuto non è caricato */
+    setEditorEnabled(false);
+
+    if (note.canvas) {
+        /* L'appunto ha già un contenuto salvato: lo carica come immagine */
+        loadCanvas(note, () => setEditorEnabled(true));
+    } else {
+        /* L'appunto è vuoto: parte da un foglio bianco */
+        resetCanvas();
+        setEditorEnabled(true);
+    }
+
+    renderSidebar();
+}
+
+/* Carica il contenuto salvato di un appunto (un'immagine PNG) dentro il canvas */
+function loadCanvas(note, onDone) {
+    const image = new Image();
+
+    image.onload = () => {
+        /* Ridimensiona il foglio secondo le dimensioni dell'immagine salvata */
+        canvas.width = image.width;
+        canvas.height = image.height;
+
+        /* Pulisce il foglio e disegna sopra l'immagine caricata */
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(image, 0, 0);
+
+        /* Calcola su quale pagina si trovava il cursore, come stima di riserva */
+        const computedPage = Math.max(0, Math.round((canvas.height - PAGE_HEIGHT) / (PAGE_HEIGHT + PAGE_GAP)));
+        /* Usa il numero di pagina salvato, se presente, altrimenti la stima */
+        currentPage = Number.isInteger(note.currentPage) ? note.currentPage : computedPage;
+        /* Usa la posizione del cursore salvata, se presente, altrimenti un valore di default */
+        cursorX = Number.isFinite(note.cursorX) ? note.cursorX : MARGIN_LEFT;
+        cursorY = Number.isFinite(note.cursorY) ? note.cursorY : (currentPage * (PAGE_HEIGHT + PAGE_GAP) + MARGIN_TOP);
+
+        /* La cronologia riparte vuota ogni volta che si apre un appunto */
+        history = [];
+        navPage = currentPage;
+
+        /* Riporta le impostazioni di disegno ai valori normali */
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = SOURCE_OVER;
+
+        updatePageIndicator();
+        if (onDone) onDone();
+    };
+
+    image.onerror = () => {
+        /* Se l'immagine salvata è corrotta, riparte da un foglio vuoto */
+        resetCanvas();
+        alert("Errore nel caricamento dell'appunto.");
+        if (onDone) onDone();
+    };
+
+    image.src = note.canvas;
+}
+
+/* Salva l'appunto attualmente aperto, convertendo il foglio in un'immagine PNG */
+function saveCurrentNote(silent = false) {
+    /* Serve avere una materia e un appunto aperti */
+    if (!currentFolderId || !currentNoteId) {
+        if (!silent) alert("Prima crea un appunto.");
+        return false;
+    }
+
+    const folder = folders.find(f => f.id === currentFolderId);
+    if (!folder) return false;
+
+    const note = folder.notes.find(n => n.id === currentNoteId);
+    if (!note) return false;
+
+    /* Aggiorna il titolo, usando un nome di riserva se è vuoto */
+    note.title = noteTitle.value.trim() || "Appunto senza nome";
+    /* Converte l'intero foglio in un'immagine PNG salvabile */
+    note.canvas = canvas.toDataURL("image/png");
+    /* Salva anche la posizione del cursore e la pagina corrente */
+    note.cursorX = cursorX;
+    note.cursorY = cursorY;
+    note.currentPage = currentPage;
+
+    const success = saveDatabase();
+
+    if (success) {
+        renderSidebar();
+        /* Mostra la conferma solo se il salvataggio non è automatico */
+        if (!silent) alert("Appunto salvato!");
+    }
+
+    return success;
+}
+
+/* Mostra brevemente la scritta verde di salvataggio automatico */
+function showAutosaveIndicator() {
+    autosaveIndicator.classList.add("show");
+    /* Annulla un eventuale timer precedente ancora in corso */
+    clearTimeout(autosaveHideTimer);
+    /* Nasconde di nuovo la scritta dopo due secondi */
+    autosaveHideTimer = setTimeout(() => autosaveIndicator.classList.remove("show"), 2000);
+}
+
+/* Ogni 30 secondi, se c'è un appunto aperto, lo salva automaticamente in silenzio */
+autosaveTimer = setInterval(() => {
+    if (!currentNoteId) return;
+    const success = saveCurrentNote(true);
+    if (success) showAutosaveIndicator();
+}, 30000);
+
+/* Aggiorna il titolo dell'appunto in memoria mentre l'utente lo scrive */
+noteTitle.addEventListener("input", () => {
+    if (!currentFolderId || !currentNoteId) return;
+
+    const folder = folders.find(f => f.id === currentFolderId);
+    if (!folder) return;
+
+    const note = folder.notes.find(n => n.id === currentNoteId);
+    if (note) note.title = noteTitle.value;
+});
+
+/* Corrispondenza tra nome dello strumento e id del suo pulsante nella toolbar */
+const TOOL_BUTTON_IDS = {
+    text: "textTool", pen: "penTool", highlighter: "highlighterTool", eraser: "eraserTool",
+    rectangle: "rectangleTool", circle: "circleTool", triangle: "triangleTool", line: "lineTool"
+};
+
+/* Cambia lo strumento di disegno attualmente attivo */
+function setTool(tool) {
+    /* Serve avere un appunto aperto per poter usare gli strumenti */
+    if (!currentNoteId) {
+        alert("Prima crea un appunto.");
+        return;
+    }
+
+    currentTool = tool;
+    /* Cambiando strumento, annulla un'eventuale immagine in attesa di essere posizionata */
+    pendingImage = null;
+
+    /* Toglie l'evidenziazione da tutti i pulsanti strumento */
+    document.querySelectorAll(".tool-button").forEach(button => button.classList.remove("active"));
+    /* Evidenzia il pulsante dello strumento appena scelto */
+    const buttonId = TOOL_BUTTON_IDS[tool];
+    if (buttonId) document.getElementById(buttonId).classList.add("active");
+
+    /* Aggiorna il puntatore del mouse in base al nuovo strumento */
+    updateCanvasCursor();
+}
+
+/* Calcola la posizione del mouse relativa al foglio, tenendo conto dello zoom del browser */
+function getMousePosition(event) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+        x: (event.clientX - rect.left) * (canvas.width / rect.width),
+        y: (event.clientY - rect.top) * (canvas.height / rect.height)
+    };
+}
+
+/* Rimuove il primo elemento della cronologia se supera il limite massimo consentito */
+function trimHistory() {
+    if (history.length > MAX_HISTORY) history.shift();
+}
+
+/* Salva nella cronologia una copia dell'intero foglio (usata per matita, forme e nuove pagine) */
+function saveFullHistory() {
+    history.push({
+        type: "full",
+        imageData: ctx.getImageData(0, 0, canvas.width, canvas.height),
+        width: canvas.width,
+        height: canvas.height,
+        cursorX: cursorX, cursorY: cursorY, currentPage: currentPage
+    });
+    trimHistory();
+}
+
+/* Corregge un rettangolo di pixel affinché resti sempre dentro i confini del foglio */
+function clampRect(x, y, w, h) {
+    x = Math.floor(Math.max(0, Math.min(x, canvas.width - 1)));
+    y = Math.floor(Math.max(0, Math.min(y, canvas.height - 1)));
+    w = Math.ceil(Math.max(1, Math.min(w, canvas.width - x)));
+    h = Math.ceil(Math.max(1, Math.min(h, canvas.height - y)));
+    return { x, y, w, h };
+}
+
+/* Salva nella cronologia solo il piccolo rettangolo di pixel occupato da un carattere digitato */
+function saveCharHistory(rawX, rawY, rawW, rawH) {
+    const rect = clampRect(rawX, rawY, rawW, rawH);
+    history.push({
+        type: "char",
+        region: rect,
+        imageData: ctx.getImageData(rect.x, rect.y, rect.w, rect.h),
+        cursorX: cursorX, cursorY: cursorY, currentPage: currentPage
+    });
+    trimHistory();
+}
+
+/* Salva nella cronologia solo la posizione del cursore, ad esempio dopo un invio */
+function saveCursorHistory() {
+    history.push({ type: "cursor", cursorX: cursorX, cursorY: cursorY, currentPage: currentPage });
+    trimHistory();
+}
+
+/* Ripristina un determinato stato precedente prelevato dalla cronologia */
+function restoreState(state) {
+    if (state.type === "full") {
+        /* Se le dimensioni del foglio sono cambiate, le riporta a quelle salvate */
+        if (canvas.width !== state.width || canvas.height !== state.height) {
+            canvas.width = state.width;
+            canvas.height = state.height;
+        }
+        /* Ridisegna l'intero foglio salvato */
+        ctx.putImageData(state.imageData, 0, 0);
+    } else if (state.type === "char") {
+        /* Ridisegna solo il piccolo rettangolo di pixel salvato */
+        ctx.putImageData(state.imageData, state.region.x, state.region.y);
+    }
+
+    /* Ripristina anche la posizione del cursore e la pagina corrente */
+    cursorX = state.cursorX;
+    cursorY = state.cursorY;
+    currentPage = state.currentPage;
+
+    /* Riporta le impostazioni di disegno ai valori normali */
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = SOURCE_OVER;
+
+    /* Evita che la pagina visualizzata superi il numero di pagine rimaste */
+    navPage = Math.min(navPage, getTotalPages() - 1);
+    updatePageIndicator();
+}
+
+/* Sposta il cursore di scrittura nel punto in cui è stato fatto click, senza uscire dai margini */
+function setCursorFromClick(x, y) {
+    cursorX = Math.max(MARGIN_LEFT, x);
+    cursorY = Math.max(MARGIN_TOP, y);
+}
+
+/* Gestisce la pressione del mouse sul foglio, in base allo strumento attivo */
+canvas.addEventListener("mousedown", event => {
+    /* Serve avere un appunto aperto */
+    if (!currentNoteId) return;
+
+    const pos = getMousePosition(event);
+    startX = pos.x;
+    startY = pos.y;
+
+    if (currentTool === "text") {
+        /* Con lo strumento di scrittura, il click sposta solo il cursore */
+        setCursorFromClick(pos.x, pos.y);
+        return;
+    }
+
+    if (currentTool === "pen" || currentTool === "highlighter" || currentTool === "eraser") {
+        /* Salva lo stato del foglio prima di iniziare a disegnare */
+        saveFullHistory();
+        isDrawing = true;
+
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineCap = "round";
+        ctx.lineWidth = Number(lineWidthInput.value);
+
+        if (currentTool === "eraser") {
+            /* La gomma cancella i pixel invece di disegnarci sopra */
+            ctx.globalCompositeOperation = DESTINATION_OUT;
+            ctx.globalAlpha = 1;
+        } else if (currentTool === "highlighter") {
+            /* L'evidenziatore disegna con trasparenza molto bassa per sovrapporsi più volte */
+            ctx.globalCompositeOperation = SOURCE_OVER;
+            ctx.globalAlpha = 0.01;
+            ctx.strokeStyle = colorPicker.value;
+        } else {
+            /* La matita disegna a piena opacità */
+            ctx.globalCompositeOperation = SOURCE_OVER;
+            ctx.globalAlpha = 1;
+            ctx.strokeStyle = colorPicker.value;
+        }
+    }
+
+    /* Per le forme geometriche, salva lo stato del foglio prima di disegnarle */
+    if (["rectangle", "circle", "triangle", "line"].includes(currentTool)) saveFullHistory();
+});
+
+/* Mentre il mouse si muove con il tasto premuto, disegna il tratto libero */
+canvas.addEventListener("mousemove", event => {
+    if (!isDrawing) return;
+
+    const pos = getMousePosition(event);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+});
+
+/* Quando il tasto del mouse viene rilasciato, conclude il disegno in corso */
+canvas.addEventListener("mouseup", event => {
+    if (currentTool === "pen" || currentTool === "highlighter" || currentTool === "eraser") {
+        isDrawing = false;
+        ctx.closePath();
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = SOURCE_OVER;
+        return;
+    }
+
+    const pos = getMousePosition(event);
+    /* Per le forme geometriche, disegna la forma tra il punto iniziale e quello finale */
+    if (["rectangle", "circle", "triangle", "line"].includes(currentTool)) {
+        drawShape(currentTool, startX, startY, pos.x, pos.y);
+    }
+});
+
+/* Se il mouse esce dal foglio mentre si sta disegnando, interrompe il disegno in corso */
+canvas.addEventListener("mouseleave", () => {
+    if (isDrawing) {
+        isDrawing = false;
+        ctx.closePath();
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = SOURCE_OVER;
+    }
+});
+
+/* Disegna una forma geometrica sul foglio, dato il tipo e i due punti che la delimitano */
+function drawShape(type, x1, y1, x2, y2) {
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = SOURCE_OVER;
+    ctx.strokeStyle = colorPicker.value;
+    ctx.lineWidth = Number(lineWidthInput.value);
+
+    if (type === "rectangle") {
+        /* Disegna un rettangolo dal punto iniziale a quello finale */
+        ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+    }
+
+    if (type === "line") {
+        /* Disegna una linea retta tra i due punti */
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+    }
+
+    if (type === "circle") {
+        /* Calcola centro e raggi dell'ellisse a partire dal rettangolo di selezione */
+        const centerX = (x1 + x2) / 2;
+        const centerY = (y1 + y2) / 2;
+        const radiusX = Math.abs(x2 - x1) / 2;
+        const radiusY = Math.abs(y2 - y1) / 2;
+
+        ctx.beginPath();
+        ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+
+    if (type === "triangle") {
+        /* Disegna un triangolo con la punta in alto al centro e la base ai due lati */
+        ctx.beginPath();
+        ctx.moveTo((x1 + x2) / 2, y1);
+        ctx.lineTo(x2, y2);
+        ctx.lineTo(x1, y2);
+        ctx.closePath();
+        ctx.stroke();
+    }
+}
+
+/* Calcola l'altezza di una riga di testo in base alla dimensione del font */
+function getLineHeight() {
+    return Number(fontSize.value) * 1.35;
+}
+
+/* Scrive un singolo carattere sul foglio nella posizione attuale del cursore */
+function writeText(character) {
+    const size = Number(fontSize.value);
+    ctx.font = `${size}px ${fontFamily.value}`;
+
+    /* Misura la larghezza del carattere con il font scelto */
+    const width = ctx.measureText(character).width;
+    const maxX = PAGE_WIDTH - MARGIN_RIGHT;
+
+    /* Se il carattere non entra più nella riga, va a capo automaticamente */
+    if (cursorX + width > maxX) {
+        cursorX = MARGIN_LEFT;
+        cursorY += getLineHeight();
+    }
+
+    /* Calcola il limite inferiore della pagina corrente */
+    const currentPageTop = currentPage * (PAGE_HEIGHT + PAGE_GAP);
+    const pageBottom = currentPageTop + PAGE_HEIGHT - MARGIN_BOTTOM;
+
+    /* Se si è raggiunta la fine della pagina, avvisa e non scrive oltre */
+    if (cursorY > pageBottom) {
+        alert("Hai raggiunto la fine della pagina. Premi 📄 Nuova pagina per continuare.");
+        return;
+    }
+
+    /* Salva nella cronologia solo l'area di pixel che sta per essere scritta */
+    saveCharHistory(cursorX - 1, cursorY - size * 1.1, Math.max(width, 1) + 3, size * 1.5);
+
+    /* Disegna effettivamente il carattere sul foglio */
+    ctx.fillStyle = colorPicker.value;
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = SOURCE_OVER;
+    ctx.fillText(character, cursorX, cursorY);
+
+    /* Sposta il cursore in avanti della larghezza del carattere appena scritto */
+    cursorX += width;
+}
+
+/* Cancella l'ultima azione di scrittura, ripristinando lo stato precedente */
+function handleBackspace() {
+    if (history.length === 0) return;
+    restoreState(history.pop());
+}
+
+/* Gestisce tutti i tasti premuti a livello di pagina: Escape, Backspace, Invio e caratteri */
+document.addEventListener("keydown", event => {
+    /* Il tasto Escape chiude sempre le finestre di aiuto e promemoria, se aperte */
+    if (event.key === "Escape") {
+        closeHelp();
+        closeReminders();
+    }
+
+    /* Se una finestra modale (aiuto o promemoria) è aperta, i tasti non devono scrivere sul foglio */
+    if (remindersModal.classList.contains("show") || helpModal.classList.contains("show")) return;
+
+    /* Se il focus è su un campo di testo qualsiasi (titolo, ricerca, promemoria...), lascia che sia il campo a gestire il tasto */
+    const activeTag = document.activeElement ? document.activeElement.tagName : "";
+    if (activeTag === "INPUT" || activeTag === "TEXTAREA") return;
+
+    /* Serve avere un appunto aperto e lo strumento di scrittura selezionato per continuare */
+    if (!currentNoteId || currentTool !== "text") return;
+
+    if (event.key === "Backspace") {
+        /* Impedisce al browser di tornare indietro nella pagina e cancella l'ultimo carattere */
+        event.preventDefault();
+        handleBackspace();
+        return;
+    }
+
+    if (event.key === "Enter") {
+        /* Impedisce il comportamento di default e va a capo */
+        event.preventDefault();
+        saveCursorHistory();
+
+        cursorX = MARGIN_LEFT;
+        cursorY += getLineHeight();
+
+        /* Non lascia che il cursore superi il fondo della pagina corrente */
+        const pageTop = currentPage * (PAGE_HEIGHT + PAGE_GAP);
+        const pageBottomLimit = pageTop + PAGE_HEIGHT - MARGIN_BOTTOM;
+        if (cursorY > pageBottomLimit) cursorY = pageBottomLimit;
+
+        return;
+    }
+
+    if (event.key === " ") {
+        /* Impedisce lo scroll della pagina con la barra spaziatrice e scrive uno spazio */
+        event.preventDefault();
+        writeText(" ");
+        return;
+    }
+
+    /* Qualsiasi altro tasto che corrisponda a un singolo carattere viene scritto sul foglio */
+    if (event.key.length === 1) {
+        event.preventDefault();
+        writeText(event.key);
+    }
+});
+
+/* Aggiunge una nuova pagina in fondo all'appunto attualmente aperto */
+function createNewPage() {
+    /* Serve avere un appunto aperto */
+    if (!currentNoteId) {
+        alert("Prima crea un appunto.");
+        return;
+    }
+
+    /* Salva lo stato attuale del foglio, così l'operazione è annullabile */
+    saveFullHistory();
+
+    const oldHeight = canvas.height;
+
+    /* Copia temporaneamente il contenuto attuale del foglio */
+    const oldCanvas = document.createElement("canvas");
+    oldCanvas.width = canvas.width;
+    oldCanvas.height = canvas.height;
+    oldCanvas.getContext("2d").drawImage(canvas, 0, 0);
+
+    /* Allunga il foglio per fare spazio a una nuova pagina bianca */
+    canvas.width = PAGE_WIDTH;
+    canvas.height = oldHeight + PAGE_GAP + PAGE_HEIGHT;
+
+    /* Riempie tutto il nuovo foglio di bianco e reincolla il contenuto precedente in alto */
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(oldCanvas, 0, 0);
+
+    /* Calcola la posizione verticale della linea che separa le due pagine */
+    const separatorY = oldHeight + PAGE_GAP / 2;
+
+    /* Disegna la linea grigia di separazione tra le pagine */
+    ctx.strokeStyle = "#cccccc";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, separatorY);
+    ctx.lineTo(canvas.width, separatorY);
+    ctx.stroke();
+
+    /* Scrive il numero della nuova pagina sopra la linea di separazione */
+    ctx.fillStyle = "#999";
+    ctx.font = "14px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("Pagina " + (currentPage + 2), canvas.width / 2, separatorY + 5);
+    ctx.textAlign = "left";
+
+    /* Passa alla nuova pagina e posiziona il cursore in alto a sinistra su di essa */
+    currentPage++;
+    cursorX = MARGIN_LEFT;
+    cursorY = oldHeight + PAGE_GAP + MARGIN_TOP;
+
+    goToPage(currentPage);
+}
+
+/* Calcola quante pagine compongono attualmente il foglio, in base alla sua altezza */
+function getTotalPages() {
+    return Math.max(1, Math.round((canvas.height + PAGE_GAP) / (PAGE_HEIGHT + PAGE_GAP)));
+}
+
+/* Aggiorna il testo "Pag. X/Y" mostrato nella barra superiore */
+function updatePageIndicator() {
+    const total = getTotalPages();
+    /* Mantiene la pagina visualizzata dentro i limiti validi */
+    if (navPage > total - 1) navPage = total - 1;
+    if (navPage < 0) navPage = 0;
+    pageIndicator.innerText = "Pag. " + (navPage + 1) + "/" + total;
+}
+
+/* Scorre la vista fino alla pagina numero n */
+function goToPage(n) {
+    if (!currentNoteId) return;
+
+    /* Calcola il totale delle pagine per non uscire dai limiti */
+    const total = getTotalPages();
+    navPage = Math.max(0, Math.min(n, total - 1));
+
+    /* Calcola la posizione verticale della pagina richiesta e scorre fino a lì */
+    const targetTop = navPage * (PAGE_HEIGHT + PAGE_GAP);
+    canvasContainer.scrollTo({ top: canvas.offsetTop + targetTop - 10, behavior: "smooth" });
+
+    updatePageIndicator();
+}
+
+/* Quando l'utente sceglie un file immagine dal proprio dispositivo */
+imageInput.addEventListener("change", event => {
+    /* Serve avere un appunto aperto */
+    if (!currentNoteId) {
+        alert("Prima crea un appunto.");
+        return;
+    }
+
+    const file = event.target.files[0];
+    if (!file) return;
+
+    /* Legge il file scelto e lo trasforma in un'immagine utilizzabile */
+    const reader = new FileReader();
+    reader.onload = e => {
+        const image = new Image();
+        image.onload = () => {
+            /* Tiene l'immagine in attesa finché l'utente non clicca sul foglio */
+            pendingImage = image;
+            currentTool = "image";
+            document.querySelectorAll(".tool-button").forEach(button => button.classList.remove("active"));
+            document.getElementById("imageTool").classList.add("active");
+            /* Con lo strumento immagine il puntatore torna una freccia normale */
+            updateCanvasCursor();
+            alert("Ora clicca sul foglio per inserire l'immagine.");
+        };
+        image.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+    /* Svuota il campo file per permettere di selezionare di nuovo lo stesso file in futuro */
+    imageInput.value = "";
+});
+
+/* Quando si clicca sul foglio con un'immagine in attesa, la inserisce nel punto cliccato */
+canvas.addEventListener("click", event => {
+    if (currentTool !== "image" || !pendingImage) return;
+
+    const pos = getMousePosition(event);
+    /* Salva lo stato del foglio prima di incollare l'immagine, per poterlo annullare */
+    saveFullHistory();
+
+    let width = pendingImage.width;
+    let height = pendingImage.height;
+    const maxWidth = PAGE_WIDTH - MARGIN_LEFT - MARGIN_RIGHT;
+
+    /* Se l'immagine è più larga della pagina, la rimpicciolisce mantenendo le proporzioni */
+    if (width > maxWidth) {
+        const ratio = maxWidth / width;
+        width = maxWidth;
+        height *= ratio;
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = SOURCE_OVER;
+    ctx.drawImage(pendingImage, pos.x, pos.y, width, height);
+
+    /* Dopo aver inserito l'immagine, torna automaticamente allo strumento di scrittura */
+    pendingImage = null;
+    currentTool = "text";
+    document.querySelectorAll(".tool-button").forEach(button => button.classList.remove("active"));
+    textTool.classList.add("active");
+    /* Tornati alla scrittura, il puntatore torna a essere una "I" */
+    updateCanvasCursor();
+});
+
+/* Annulla l'ultima azione, ripristinando lo stato precedente dalla cronologia */
+function undo() {
+    if (history.length === 0) return;
+    restoreState(history.pop());
+}
+
+/* Cancella completamente il contenuto dell'appunto attualmente aperto */
+function clearCurrentNote() {
+    if (!currentNoteId) return;
+    /* Chiede conferma prima di cancellare tutto */
+    if (!confirm("Vuoi cancellare completamente questo appunto?")) return;
+
+    resetCanvas();
+    history = [];
+}
+
+/* Esporta l'appunto attualmente aperto come singola immagine PNG */
+function exportAsImage() {
+    if (!currentNoteId) {
+        alert("Prima apri un appunto.");
+        return;
+    }
+
+    /* Converte il foglio in un file immagine e avvia il download */
+    canvas.toBlob(blob => {
+        if (!blob) {
+            alert("Non è stato possibile creare l'immagine.");
+            return;
+        }
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = (noteTitle.value.trim() || "appunto") + ".png";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        /* Libera la memoria occupata dal file temporaneo dopo un secondo */
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }, "image/png");
+}
+
+/* Apre e chiude la finestra di aiuto */
+function showHelp() { helpModal.classList.add("show"); }
+function closeHelp() { helpModal.classList.remove("show"); }
+
+/* Salva l'elenco dei promemoria nel localStorage */
+function saveReminders() {
+    try {
+        localStorage.setItem("schoolNotesReminders", JSON.stringify(reminders));
+        return true;
+    } catch (error) {
+        console.error(error);
+        alert("Non è stato possibile salvare i promemoria localmente.");
+        return false;
+    }
+}
+
+/* Apre la finestra dei promemoria, aggiornandone prima il contenuto */
+function openReminders() {
+    renderReminders();
+    remindersModal.classList.add("show");
+}
+
+/* Chiude la finestra dei promemoria */
+function closeReminders() { remindersModal.classList.remove("show"); }
+
+/* Aggiunge un nuovo promemoria in base a quanto scritto nei campi del modulo */
+function addReminder() {
+    const textInput = document.getElementById("reminderText");
+    const dateInput = document.getElementById("reminderDate");
+
+    const text = textInput.value.trim();
+    if (!text) {
+        alert("Scrivi cosa devi fare.");
+        return;
+    }
+
+    /* Crea il nuovo promemoria, con scadenza opzionale */
+    reminders.push({
+        id: generateId(),
+        text: text,
+        dueDate: dateInput.value || null,
+        done: false
+    });
+
+    /* Svuota i campi del modulo dopo l'aggiunta */
+    textInput.value = "";
+    dateInput.value = "";
+
+    saveReminders();
+    renderReminders();
+}
+
+/* Segna un promemoria come completato o lo riporta a non completato */
+function toggleReminder(id) {
+    const reminder = reminders.find(r => r.id === id);
+    if (!reminder) return;
+
+    reminder.done = !reminder.done;
+    saveReminders();
+    renderReminders();
+}
+
+/* Elimina definitivamente un promemoria dall'elenco */
+function deleteReminder(id) {
+    reminders = reminders.filter(r => r.id !== id);
+    saveReminders();
+    renderReminders();
+}
+
+/* Converte una data in formato AAAA-MM-GG nel formato leggibile GG/MM/AAAA */
+function formatReminderDate(dateString) {
+    const parts = dateString.split("-");
+    if (parts.length !== 3) return dateString;
+    return parts[2] + "/" + parts[1] + "/" + parts[0];
+}
+
+/* Ridisegna l'intera lista dei promemoria nella finestra dedicata */
+function renderReminders() {
+    const list = document.getElementById("reminderList");
+    list.replaceChildren();
+
+    /* Ordina i promemoria: prima quelli da fare, poi quelli con scadenza più vicina */
+    const sorted = [...reminders].sort((a, b) => {
+        if (a.done !== b.done) return a.done ? 1 : -1;
+        if (a.dueDate && b.dueDate) return a.dueDate.localeCompare(b.dueDate);
+        if (a.dueDate) return -1;
+        if (b.dueDate) return 1;
+        return 0;
+    });
+
+    if (sorted.length === 0) {
+        /* Se non ci sono promemoria, mostra un messaggio guida */
+        const empty = document.createElement("div");
+        empty.className = "reminder-empty";
+        empty.innerText = "Nessun compito in lista. Aggiungine uno qui sopra!";
+        list.appendChild(empty);
+    } else {
+        const fragment = document.createDocumentFragment();
+
+        /* Per ogni promemoria, crea la riga corrispondente */
+        sorted.forEach(reminder => {
+            const item = document.createElement("li");
+            item.className = "reminder-item" + (reminder.done ? " done" : "");
+
+            /* Casella di spunta per segnare il promemoria come completato */
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = reminder.done;
+            checkbox.onchange = () => toggleReminder(reminder.id);
+
+            const text = document.createElement("span");
+            text.className = "reminder-text";
+            text.innerText = reminder.text;
+
+            item.appendChild(checkbox);
+            item.appendChild(text);
+
+            /* Se il promemoria ha una scadenza, la mostra formattata */
+            if (reminder.dueDate) {
+                const date = document.createElement("span");
+                date.className = "reminder-date";
+                date.innerText = "📅 " + formatReminderDate(reminder.dueDate);
+                item.appendChild(date);
+            }
+
+            /* Pulsante per eliminare il singolo promemoria */
+            const remove = document.createElement("button");
+            remove.className = "reminder-delete";
+            remove.innerText = "✕";
+            remove.onclick = () => deleteReminder(reminder.id);
+            item.appendChild(remove);
+
+            fragment.appendChild(item);
+        });
+
+        list.appendChild(fragment);
+    }
+
+    updateRemindersBadge();
+}
+
+/* Aggiorna il pallino con il numero di promemoria non ancora completati */
+function updateRemindersBadge() {
+    const badge = document.getElementById("remindersBadge");
+    const pending = reminders.filter(r => !r.done).length;
+
+    if (pending > 0) {
+        badge.innerText = pending;
+        badge.classList.remove("hidden");
+    } else {
+        badge.classList.add("hidden");
+    }
+}
+
+/* Formato del file di backup .SchoollAppunti:
+   [testo magico][4 byte con la lunghezza del manifest][manifest in JSON][immagini PNG in sequenza]
+   Le immagini vengono salvate come dati binari veri e propri, non come testo Base64,
+   per mantenere il file più leggero. */
+
+/* Testo che identifica un file come backup valido di SchoollAppunti */
+const SCHOOLNOTES_MAGIC = "SCHOOLNOTES_FILE_V1";
+/* Estensione usata per i file di backup */
+const SCHOOLNOTES_EXTENSION = ".SchoollAppunti";
+const projectFileInput = document.getElementById("projectFileInput");
+
+/* Converte una stringa di testo nei byte corrispondenti, in formato UTF-8 */
+function utf8Encode(text) {
+    return new TextEncoder().encode(text);
+}
+
+/* Converte dei byte UTF-8 nella stringa di testo corrispondente */
+function utf8Decode(bytes) {
+    return new TextDecoder().decode(bytes);
+}
+
+/* Converte una immagine in formato Data URL (Base64) nei byte grezzi corrispondenti */
+function dataUrlToBytes(dataUrl) {
+    const commaIndex = dataUrl.indexOf(",");
+    if (commaIndex === -1) throw new Error("Data URL non valido.");
+
+    const base64 = dataUrl.substring(commaIndex + 1);
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+
+    return bytes;
+}
+
+/* Converte dei byte grezzi di un'immagine in una Data URL utilizzabile in un tag img o canvas */
+function bytesToDataUrl(bytes, mimeType = "image/png") {
+    const chunkSize = 0x8000;
+    let binary = "";
+
+    /* Converte i byte a piccoli blocchi, per evitare errori su immagini molto grandi */
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+        const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+        binary += String.fromCharCode(...chunk);
+    }
+
+    return `data:${mimeType};base64,${btoa(binary)}`;
+}
+
+/* Prepara una copia dell'intero progetto pronta per essere salvata su file, separando le immagini dal testo */
+function createProjectSnapshotForFile() {
+    /* Crea una copia profonda delle materie, così l'originale non viene modificato */
+    const copiedFolders = JSON.parse(JSON.stringify(folders));
+    const images = [];
+
+    for (const folder of copiedFolders) {
+        if (!Array.isArray(folder.notes)) continue;
+
+        for (const note of folder.notes) {
+            if (!note.canvas || typeof note.canvas !== "string") continue;
+
+            /* Estrae l'immagine dall'appunto e la mette in un elenco separato */
+            const imageIndex = images.length;
+            images.push({
+                index: imageIndex,
+                bytes: dataUrlToBytes(note.canvas)
+            });
+
+            /* Sostituisce l'immagine con un semplice riferimento numerico */
+            note.canvas = null;
+            note.canvasFile = imageIndex;
+        }
+    }
+
+    return {
+        manifest: {
+            format: "SCHOOL_NOTES_FILE",
+            version: 1,
+            createdAt: new Date().toISOString(),
+            currentFolderId,
+            currentNoteId,
+            folders: copiedFolders,
+            imageCount: images.length
+        },
+        images
+    };
+}
+
+/* Crea il file di backup .SchoollAppunti e avvia il download */
+async function exportProjectFile() {
+    /* Salva prima l'appunto aperto, così anche le ultime modifiche finiscono nel backup */
+    if (currentNoteId) saveCurrentNote(true);
+
+    let project;
+
+    try {
+        project = createProjectSnapshotForFile();
+    } catch (error) {
+        console.error(error);
+        alert("Non è stato possibile preparare il file .SchoollAppunti. Il progetto potrebbe essere troppo grande per la memoria disponibile.");
+        return;
+    }
+
+    try {
+        const magicBytes = utf8Encode(SCHOOLNOTES_MAGIC);
+        const manifestBytes = utf8Encode(JSON.stringify(project.manifest));
+
+        /* Scrive la lunghezza del manifest in un blocco di 4 byte */
+        const header = new ArrayBuffer(4);
+        new DataView(header).setUint32(0, manifestBytes.byteLength, true);
+
+        /* Compone il file: prima il testo magico, poi la lunghezza, poi il manifest */
+        const parts = [magicBytes, new Uint8Array(header), manifestBytes];
+
+        /* Aggiunge in coda tutte le immagini, una dopo l'altra */
+        for (const image of project.images) {
+            parts.push(image.bytes);
+        }
+
+        const blob = new Blob(parts, { type: "application/octet-stream" });
+
+        /* Avvia il download del file appena creato */
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "SchoollAppunti-backup.SchoollAppunti";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        alert(`✅ Esportazione completata.\n\nFile: ${formatBytes(blob.size)}`);
+    } catch (error) {
+        console.error(error);
+        alert("Errore durante la creazione del file .SchoollAppunti. Il progetto potrebbe essere troppo grande per la memoria disponibile.");
+    }
+}
+
+/* Apre la finestra di selezione file per scegliere un backup da importare */
+function importProjectFile() {
+    projectFileInput.value = "";
+    projectFileInput.click();
+}
+
+/* Quando l'utente sceglie un file di backup da importare */
+projectFileInput.addEventListener("change", async event => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    /* Controlla che il file scelto abbia l'estensione corretta */
+    if (!file.name.toLowerCase().endsWith(SCHOOLNOTES_EXTENSION.toLowerCase())) {
+        alert("Seleziona un file .SchoollAppunti valido.");
+        return;
+    }
+
+    try {
+        await importProjectFromFile(file);
+    } catch (error) {
+        console.error(error);
+        alert("❌ Impossibile importare il file .SchoollAppunti.\n\nIl file potrebbe essere danneggiato o non appartenere a SchoollAppunti.");
+    }
+});
+
+/* Legge e importa un file di backup .SchoollAppunti, sostituendo i dati attuali */
+async function importProjectFromFile(file) {
+    /* Chiede conferma prima di sovrascrivere i dati attualmente presenti */
+    if (!confirm(
+        "Importando questo file verranno sostituiti i dati attualmente presenti.\n\n" +
+        "Vuoi continuare?"
+    )) return;
+
+    const buffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+    const magicBytes = utf8Encode(SCHOOLNOTES_MAGIC);
+
+    if (bytes.byteLength < magicBytes.byteLength + 4) {
+        throw new Error("File troppo piccolo.");
+    }
+
+    /* Controlla che il file inizi con il testo magico atteso */
+    for (let i = 0; i < magicBytes.length; i++) {
+        if (bytes[i] !== magicBytes[i]) {
+            throw new Error("Formato .SchoollAppunti non riconosciuto.");
+        }
+    }
+
+    /* Legge la lunghezza del manifest scritta subito dopo il testo magico */
+    const view = new DataView(buffer);
+    const manifestLength = view.getUint32(magicBytes.length, true);
+
+    const manifestStart = magicBytes.length + 4;
+    const manifestEnd = manifestStart + manifestLength;
+
+    if (manifestEnd > bytes.byteLength) {
+        throw new Error("Manifest danneggiato.");
+    }
+
+    /* Estrae e decodifica il manifest JSON */
+    const manifestBytes = bytes.subarray(manifestStart, manifestEnd);
+    const manifest = JSON.parse(utf8Decode(manifestBytes));
+
+    /* Controlla che il manifest abbia la struttura attesa */
+    if (
+        !manifest ||
+        manifest.format !== "SCHOOL_NOTES_FILE" ||
+        !Array.isArray(manifest.folders)
+    ) {
+        throw new Error("Questo non è un salvataggio SchoollAppunti valido.");
+    }
+
+    const imageStart = manifestEnd;
+    const imageCount = Number(manifest.imageCount || 0);
+
+    /* Le immagini sono scritte una dopo l'altra nel file: per capire dove
+       finisce ciascun PNG si legge la sua struttura interna fino al blocco IEND */
+    const imageData = [];
+    let offset = imageStart;
+
+    for (let i = 0; i < imageCount; i++) {
+        const png = readPngFromBuffer(bytes, offset);
+
+        imageData.push(png.bytes);
+        offset = png.nextOffset;
+    }
+
+    /* Ricostruisce i canvas come Data URL solo al momento dell'importazione:
+       il file .SchoollAppunti resta comunque binario, senza testo Base64 dentro */
+    for (const folder of manifest.folders) {
+        if (!Array.isArray(folder.notes)) continue;
+
+        for (const note of folder.notes) {
+            if (Number.isInteger(note.canvasFile)) {
+                const image = imageData[note.canvasFile];
+
+                if (!image) {
+                    throw new Error("Immagine di una pagina mancante.");
+                }
+
+                note.canvas = bytesToDataUrl(image);
+                delete note.canvasFile;
+            } else {
+                note.canvas = note.canvas || null;
+            }
+        }
+    }
+
+    /* Sostituisce i dati attuali con quelli importati */
+    folders = JSON.parse(JSON.stringify(manifest.folders));
+    currentFolderId = manifest.currentFolderId || null;
+    currentNoteId = manifest.currentNoteId || null;
+
+    /* Salva subito i dati importati nel localStorage, così restano anche dopo un ricaricamento */
+    saveDatabase();
+    renderSidebar();
+
+    /* Controlla che la materia salvata nel manifest esista ancora dopo l'importazione */
+    const validFolder = folders.find(folder => folder.id === currentFolderId);
+
+    if (!validFolder) {
+        /* Se la materia non esiste più, chiude l'editor */
+        currentFolderId = null;
+        currentNoteId = null;
+        resetCanvas();
+        setEditorEnabled(false);
+        noteTitle.value = "";
+    } else {
+        const notes = Array.isArray(validFolder.notes) ? validFolder.notes : [];
+        const validNote = notes.find(note => note.id === currentNoteId);
+
+        if (validNote) {
+            /* Riapre l'appunto che era aperto al momento dell'esportazione */
+            openNote(currentFolderId, currentNoteId);
+        } else {
+            currentNoteId = null;
+            selectFolder(currentFolderId);
+        }
+    }
+
+    alert(`✅ Importazione completata.\n\nFile: ${file.name}\nDimensione: ${formatBytes(file.size)}`);
+}
+
+/* Legge un singolo PNG a partire da una certa posizione nel buffer, restituendone i byte e la posizione successiva */
+function readPngFromBuffer(bytes, startOffset) {
+    /* Sequenza di byte che identifica sempre l'inizio di un file PNG valido */
+    const signature = [
+        137, 80, 78, 71, 13, 10, 26, 10
+    ];
+
+    if (startOffset + signature.length > bytes.length) {
+        throw new Error("PNG incompleto.");
+    }
+
+    /* Verifica che i primi byte corrispondano alla firma PNG attesa */
+    for (let i = 0; i < signature.length; i++) {
+        if (bytes[startOffset + i] !== signature[i]) {
+            throw new Error("Immagine PNG non valida nel file .SchoollAppunti.");
+        }
+    }
+
+    let offset = startOffset + 8;
+
+    /* Scorre i blocchi (chunk) del PNG uno dopo l'altro finché non trova la fine del file */
+    while (offset + 12 <= bytes.length) {
+        const length =
+            (bytes[offset] << 24) |
+            (bytes[offset + 1] << 16) |
+            (bytes[offset + 2] << 8) |
+            bytes[offset + 3];
+
+        const type = String.fromCharCode(
+            bytes[offset + 4],
+            bytes[offset + 5],
+            bytes[offset + 6],
+            bytes[offset + 7]
+        );
+
+        if (length < 0) {
+            throw new Error("Dimensione PNG non valida.");
+        }
+
+        const chunkEnd = offset + 12 + length;
+
+        if (chunkEnd > bytes.length) {
+            throw new Error("PNG danneggiato o incompleto.");
+        }
+
+        offset = chunkEnd;
+
+        /* Il blocco IEND segna sempre la fine del file PNG */
+        if (type === "IEND") {
+            return {
+                bytes: bytes.slice(startOffset, offset),
+                nextOffset: offset
+            };
+        }
+    }
+
+    throw new Error("Fine PNG non trovata.");
+}
+
+/* Trasforma un numero di byte in un testo leggibile (B, KB, MB o GB) */
+function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+    return (bytes / (1024 * 1024 * 1024)).toFixed(2) + " GB";
+}
+
+/* Avvio dell'applicazione: prepara un foglio vuoto, disabilita l'editor
+   e disegna la sidebar e il pallino dei promemoria con lo stato iniziale */
+resetCanvas();
+setEditorEnabled(false);
+updateCanvasCursor();
+renderSidebar();
+updateRemindersBadge();
+</script>
+</body>
+</html>
