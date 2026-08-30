@@ -26,7 +26,7 @@
 
 
 	<p style="font-size: 15px; color: yellow;">⚠️Copyright Disclaimer⚠️:
- 	All content posted here (except for the gif's) and on the other pages is copyrighted.</p><a href="emailcssfixtest.html"><button style="background-color: pink; color: darkcoral;" >My Email</button></a>
+ 	All content posted here (except for the gif's) and on the other pages is copyrighted.</p><a href="email.html"><button style="background-color: pink; color: darkcoral;" >My Email</button></a>
 
 	<h1 style="font-family: Georgia; color: white;"><b>Hello everyone, welcome to this site. I hope you will enjoy staying here, reading, watching, playing, listening to music and learning new things.</b></h1>
 
@@ -278,6 +278,130 @@ PEr far funzionare css nel codice bisogna mettere lo <style> </style> dopo <titl
 
 </body>
 </html>
+
+
+
+////////////////////////////////////////////////////
+CSS per fix da telefono
+////////////////////////////////////////////////////
+
+3. 📱 Metodo @media: PC e telefono separati
+
+Se vuoi che su PC abbia un aspetto e su smartphone un altro:
+
+.textemail1 {
+    position: absolute;
+    left: 27%;
+}
+
+.textemail2 {
+    position: absolute;
+    left: 31%;
+}
+
+@media (max-width: 600px) {
+
+    .textemail1,
+    .textemail2 {
+        position: static;
+        text-align: center;
+        width: 90%;
+        margin: 20px auto;
+    }
+
+    .catdancing {
+        position: static;
+        display: block;
+        width: 70%;
+        margin: 30px auto;
+    }
+}
+
+Questo è molto utile se il tuo design attuale ti piace su PC e vuoi semplicemente correggerlo per telefono.
+
+///////////////////////////////////////////////////////////////////
+Qui c'è un esempio di come pèuoi utliuzzarla, ad esempio così. in modo che da telefono si veda in un modo e da pc in un'altra
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        Email
+    </title>
+
+    <style>
+        
+        
+        html, body {
+            
+    margin: 0;
+    padding: 0;
+    overflow: ;
+
+    background-image: url('images/background1.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat;
+}
+
+
+@media (max-width: 600px) {
+    body {
+        zoom: 50%;
+    }
+
+
+    .capo {
+        position: absolute;
+
+        left: -29%;
+    }
+}
+
+
+    </style>
+
+
+</head>
+<body style="background-image: url('images/background1.png');">
+
+
+
+<a href="index.html" ><button style="background: grey; color: yellow; border-radius: 30px;" >&nbsp;&nbsp;&nbsp;Back&nbsp;&nbsp;&nbsp;</button></a>
+
+<div class="capo">
+
+<h1 style="font-family: Georgia; color: white;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use this if you wan't to contact me</h1>
+
+<p>&nbsp;</p>
+
+<h1 style="color: purple; -webkit-text-stroke-width: 0.3px; -webkit-text-stroke-color: white;"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dfranzellosk486@gmail.com </h1>
+
+<p>&nbsp;</p>   
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/dancing-cat-41.gif">
+
+
+</div>
+
+
+
+
+/////////////////////////////////////////
+IMPORTANTISSIMISSIMISSIMOMISSIMISISMO
+/////////////////////////////////////////
+
+
+ricordati stai attento quando metti le classi e metti le cordinate da telefono su @media se puoi evitare di mettere div fallo, sennò tieni presente che devi riarrangiare leggermente la pagina del pc, perchè sposta leggermente immagini ecc... ricordatelo, se lo devi fare poi fixa il pc, ansi evita proprio di usare <div> la maggior parte delle volte non funziona e ti sembrerà che quello che fai il programma non lo legge
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 -->
