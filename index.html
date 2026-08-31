@@ -8,7 +8,20 @@
 	</title>
     <style>
 
-        
+        button {
+    cursor: pointer;
+
+}
+
+    @media (max-width: 600px) {
+
+        .maremma {
+
+            font-size: 15.7px;;
+        }
+    }
+
+
 
 
     </style>
@@ -45,9 +58,10 @@
 	<p style="font-family: Georgia; color: yellow; font-size: 35px;"><b>⚠️If you want, you can contact me in my Email and i will reply to all of you'r question here below, feel free to write me an Email. You can find my Email in the left corner of the site. Have a nice day :)⚠️</b></p>
 	<a href="questionreply.html"><button style="background-image: url(images/bb.PNG); color: violet; border-radius: 30px;" >Reply To You'r Questions</button></a>
 
-    <h1 style="font-family: Georgia; color: white;">⚠️New added things⚠️</h1>
+    <h1 style="font-family: Georgia; color: white;">⚠️New added things⚠️"</h1>
+    <h1 class="maremma" style="font-family: Georgia; color: white;">last update | 31/08/2026/18:50 ⌚ |</h1>
 
-    <p><a href="tutorials/Tutorial1CapsÈ.html"><button style="background-color: grey; color: yellow; border-radius: 30px;">How to write an È in CAPS</button></a></p>
+    <p> <a href="tutorials/Tutorials2comecreaunapastacomeunitaliano.html"><button style="background-color: yellow; color: black; border-radius: 30px;">2. How to make Pasta like a real Italian</button> </a> <a href="tutorials/Tutorial1CapsÈ.html"><button style="background-color: orange; color: darkcyan; border-radius: 30px;">1. How to type an uppercase "È"</button> </a> </p>
 
 
  <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/Garoka.png"></a>  <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/Desert Eyes.png"></a>  <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/AtTheEndOfTheUniverse.png"></a>  <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/Amennoplex.png"></a>  <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/Allecin.png"></a> <a href="Art.html"><img style="border: 5px solid white;" img width="400" src="images/khepnix.png"></a> <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/Unished.png"></a> <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/dogfoseye.png"></a>
@@ -133,8 +147,9 @@
 
 
 <!--
-
+//////////////////////////////////////////////////////////////////////////////////////////////////
 TUTTI I FONT IN HTML
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 Arial (sans-serif) 
 Verdana (sans-serif) 
@@ -145,7 +160,11 @@ Georgia (serif)
 Garamond (serif) 
 Courier New (monospace) 
 Brush Script MT (cursive)
-Comic Sans 
+Comic Sans MS
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+fine di tutti i font disponibili.
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -487,4 +506,91 @@ per mettere il testo sottolineato devi aggiungere <u></u>, ad esempio come qui s
 
 <p style="font-family: Comic Sans MS; color: yellow;"><u><mark style="background-color: lightgreen;">THIS TUTORIAL WAS MADE IN   | 30/08/2026 |</p></u>
 
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+COME FARE DIRETTAMENTE UNO SFONDO PIU BORDER INTORNO / EVIDENZIATORE / EVIDENZIAZIONE DIETRO DI TUTTO UN BLOCCO.
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+PER FARE QUELLO BISOGNA UTILIZZARE UN <div style="border: 5px solid white; background-color: darkgreen;"></div> E POI CHIUDERE ALLA FINE DEL BLOCCO FINO A DOVE NON LO VOGLIAMO SOTTO POTRAI TROVARE UN ESEMPIO DI COME TUTTO È FATTO.:
+
+
+
+<div style="border: 5px solid white; background-color: darkgreen;"><h1 style="font-family: Comic Sans MS; color: white;"> In this tutorial, you will find out how to make pasta like a real Italian. </h1>
+
+
+    <h2 style="font-family: Comic Sans MS; color: white;">First, choose the type of pasta you like. There are <b>(PENNE, CHIOCCIOLE, SPAGHETTI, RICCIOLI, ETC...)</b>
+    <p>After you choose the type of pasta you like the most, you have to choose your favorite brand of pasta and buy it. "If you want a tutorial on how to make pasta yourself, there will be one in the future".</p></h2>
+
+    <br>
+
+    <h2 style="color: white; font-family: Comic Sans MS;" >Once you have everything, take a stockpot and fill it with about 80% water. Add some salt and wait until the water boils.
+        <p>When the water boils, add the pasta. Every once in a while, taste the pasta to see if it is ready.</p>
+            <p>A few minutes before the pasta is ready, you can prepare some tomato sauce and heat it in a saucepan.</p>
+                <p> When the pasta is ready, put the sauce in a plate, add some grated cheese to the sauce, and then put the pasta on the plate.</p>
+                    <p>Toss the pasta in the sauce and add some more grated cheese.</p></h2>
+
+                    <br>
+
+                    <h2 style="color: white; font-family: Comic Sans MS;" ><b>Now that everything is done, enjoy your pasta and Buon Appetito!</b></h2></div>
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+FINE DI COME FARE DIRETTAMENTE UNO SFONDO PIU BORDER INTORNO / EVIDENZIATORE / EVIDENZIAZIONE DIETRO DI TUTTO UN BLOCCO.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ERRORI CSS CLASS NON TROVATA 1
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+LA MAGGIOR PARTE DELLE VOLTE POTRESTI AVER SBAGLIATO, AD ESEMPIO COSì È SBAGLIATO:
+
+
+    <style>
+
+        button {
+    cursor: pointer;
+
+
+
+    @media (max-width: 600px) {
+
+        .maremma {
+
+            font-size: 15.7px;;
+        }
+    }
+
+}
+
+
+    </style>
+
+È SBAGLIATO PER IL FATTO CHE LA CLASSE TUTTO È DENTRO LA CLASSE BUTTON
+
+
+INVECE COSI È GISUTO:
+
+
+
+    <style>
+
+        button {
+    cursor: pointer;
+
+}
+
+    @media (max-width: 600px) {
+
+        .maremma {
+
+            font-size: 15.7px;;
+        }
+    }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+FINE ERRORI CSS CLASS NON TROVATA 1
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    </style>
 -->
