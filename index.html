@@ -7,17 +7,8 @@
 		Mannaya's Site
 	</title>
     <style>
-        
-        html, body {
-    margin: 0;
-    padding: 0;
-    overflow: ;
 
-    background-image: url('images/background1.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: repeat;
-}
+        
 
 
     </style>
@@ -38,7 +29,7 @@
 
 
 
-	<a href="AboutMe.html"><button style="background-color: black; color: green; border-radius: 30px;" class="button">&nbsp;&nbsp;&nbsp;Enter Site&nbsp;&nbsp;&nbsp;</button></a> <!-- Qua andiamo a definire la classe, in modo da poter usare la classe per darli una funzione con css sotto -->
+	<a href="AboutMe.html"><button style="background-color: black; color: green; border-radius: 30px;" class="button">Enter Site</button></a> <!-- Qua andiamo a definire la classe, in modo da poter usare la classe per darli una funzione con css sotto -->
 		
     <style>
                 button:hover {      /*  Questo fa si che diventi la manina quando va sopra il pulsante */
@@ -56,19 +47,10 @@
 
     <h1 style="font-family: Georgia; color: white;">⚠️New added things⚠️</h1>
 
-
-<a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/Garoka.png"></a>  <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/Desert Eyes.png"></a>  <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/AtTheEndOfTheUniverse.png"></a>  <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/Amennoplex.png"></a>  <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/Allecin.png"></a> <a href="Art.html"><img style="border: 5px solid white;" img width="400" src="images/khepnix.png"></a> <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/Unished.png"></a> <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/dogfoseye.png"></a> 
-
+    <p><a href="tutorials/Tutorial1CapsÈ.html"><button style="background-color: grey; color: yellow; border-radius: 30px;">How to write an È in CAPS</button></a></p>
 
 
-
-
-
-
-
-
-
-
+ <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/Garoka.png"></a>  <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/Desert Eyes.png"></a>  <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/AtTheEndOfTheUniverse.png"></a>  <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/Amennoplex.png"></a>  <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/Allecin.png"></a> <a href="Art.html"><img style="border: 5px solid white;" img width="400" src="images/khepnix.png"></a> <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/Unished.png"></a> <a href="Art.html"><img style="border: 5px solid white;" width="400" src="images/dogfoseye.png"></a>
 
 
 
@@ -200,16 +182,55 @@ Come usare il <td valign="top">. Questa stringa di farà vedere come far andare 
 molto utile, prendi esempio da questo in caso te lo scordi
 
 
-style="border-radius:25px; serve per far si che il pulsante si arrotondisca
-    
+/////////////////////////////////////////////////////////////////////////////
+come markare un testo
+/////////////////////////////////////////////////////////////////////////////
 
-&nbsp; questa linea fa si che tu possa spostare a tuo piacimento i pulsanti, praticamete crea degli spazi invisibili i quali spostano il pulsante fino a dove te vuoi
+<mark style="color: lightblue; background-color: lightgreen;">Hello to all!</mark>
+
+<mark>Hello to all!</mark>
 
 
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+//////////////////////////////////////////////////////////////////////////
+COME METTERE IL COLLEGAMENTO AD UN LINK/FILE
+////////////////////////////////////////////////////////////////////////////
+
+mettiamo conto che tu vuoi che un testo tipo "maremma" ti faccia passare da 
+
+"index.html  a ->  maremma.htlm "
+
+per fare una cosa del genere devi fare questo:
 
 
-////////////////////////////////////////////////////////////////////////////////////
+<a href="maremma.html">
+
+
+    stessa cosa con i pulsanti.
+
+
+    tipo hai:
+
+    <button>Cignale</button>
+
+    devi fare
+
+
+    <a href="maremma.html"><button>Cignale</button></a>
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    COME METTERE IMMAGINI/VIDEO/AUDIO
+    /////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////
 Come mettere il titolo di una pagina, titole visibile grosso e varie diminesioni
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -282,7 +303,7 @@ PEr far funzionare css nel codice bisogna mettere lo <style> </style> dopo <titl
 
 
 ////////////////////////////////////////////////////
-CSS per fix da telefono
+CSS per fix da telefono ATTENZIONE TIENI SEMPRE CONTO DI FARE I FIX PER I DEVICE DA UN MASSIMO DI GRANDEZZA DI 300PX ANCHE SE METTI 600, FAI SEMPRE E SOLO FIX PER DEVICE DA 300 TRAMITE LA DEBUG MODE DEL BROWSER VDEI PIU SOTTO AL PUNTO DOVE HO SCRITTO MIGLIOR MODO DI FIXARE
 ////////////////////////////////////////////////////
 
 3. 📱 Metodo @media: PC e telefono separati
@@ -299,7 +320,10 @@ Se vuoi che su PC abbia un aspetto e su smartphone un altro:
     left: 31%;
 }
 
-@media (max-width: 600px) {
+
+"CSS per fix da telefono ATTENZIONE TIENI SEMPRE CONTO DI FARE I FIX PER I DEVICE DA UN MASSIMO DI GRANDEZZA DI 300PX ANCHE SE METTI 600, FAI SEMPRE E SOLO FIX PER DEVICE DA 300 TRAMITE LA DEBUG MODE DEL BROWSER"
+
+@media (max-width: 600px) { "CSS per fix da telefono ATTENZIONE TIENI SEMPRE CONTO DI FARE I FIX PER I DEVICE DA UN MASSIMO DI GRANDEZZA DI 300PX ANCHE SE METTI 600, FAI SEMPRE E SOLO FIX PER DEVICE DA 300 TRAMITE LA DEBUIG MODE DEL BROWSER"
 
     .textemail1,
     .textemail2 {
@@ -347,9 +371,10 @@ Qui c'è un esempio di come pèuoi utliuzzarla, ad esempio così. in modo che da
     background-position: center;
     background-repeat: repeat;
 }
-
-
-@media (max-width: 600px) {
+"
+"CSS per fix da telefono ATTENZIONE TIENI SEMPRE CONTO DI FARE I FIX PER I DEVICE DA UN MASSIMO DI GRANDEZZA DI 300PX ANCHE SE METTI 600, FAI SEMPRE E SOLO FIX PER DEVICE DA 300 TRAMITE LA DEBUG MODE DEL BROWSER"
+"
+@media (max-width: 600px) {  "CSS per fix da telefono ATTENZIONE TIENI SEMPRE CONTO DI FARE I FIX PER I DEVICE DA UN MASSIMO DI GRANDEZZA DI 300PX ANCHE SE METTI 600, FAI SEMPRE E SOLO FIX PER DEVICE DA 300 TRAMITE LA DEBUGA MODE DEL BROWSER"
     body {
         zoom: 50%;
     }
@@ -388,20 +413,78 @@ Qui c'è un esempio di come pèuoi utliuzzarla, ad esempio così. in modo che da
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/dancing-cat-41.gif">
 
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Border buggato, a volte può sembrarti buggato perchè lo fai male, per farlo bene devi mettere "sempre" prima della parola una cosetta, vedi sotto per la spiegazione.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ per esempio una <a> e poi vai a fare <a style="border: 5px solid white; background-color: green;">Maremma</a>
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+FIne della spiegazione del border buggato
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Come fixare ancora meglio le immagine e testi per multi dispositivi.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+USA SEMPRE width: vw... PER FAR SI DI FIXARE PRATICAMENTE IL TUTTO
+
+
+    <style>
+                button:hover {      /*  Questo fa si che diventi la manina quando va sopra il pulsante */
+  cursor: pointer;
+}   
+
+
+
+    @media (max-width: 600px) { /*   "CSS per fix da telefono ATTENZIONE TIENI SEMPRE CONTO DI FARE I FIX PER I DEVICE DA UN MASSIMO DI GRANDEZZA DI 300PX ANCHE SE METTI 600, FAI SEMPRE E SOLO FIX PER DEVICE DA 300 TRAMITE LA DEBUGA MODE DEL BROWSER"Ricorda sempre di basar il width del test sul browser sul 300 di larghezza, anche se qui metti 600 */
+
+        .imgcat {
+
+            width: 90vw;
+        }
+
+
+
+        .catcomputer {
+
+            width: 90vw;
+        }
+
+        .realcat2f {
+
+            width: 90vw;
+        }
+
+
+        O PER I TESTI UNA COSA DEL GENERE:
+
+
+                .usethis {
+
+            font-size: 17px;
+        }
+        
+}
+
+
+
+    }
+
+
+
 </div>
+///////////////////////////////////////////////////////////////////////////////////
+Come mettere il testo sottolineato:
+/////////////////////////////////////////////////////////////////////////////////////
 
+per mettere il testo sottolineato devi aggiungere <u></u>, ad esempio come qui sotto:
 
-
-
-/////////////////////////////////////////
-IMPORTANTISSIMISSIMISSIMOMISSIMISISMO
-/////////////////////////////////////////
-
-
-ricordati stai attento quando metti le classi e metti le cordinate da telefono su @media se puoi evitare di mettere div fallo, sennò tieni presente che devi riarrangiare leggermente la pagina del pc, perchè sposta leggermente immagini ecc... ricordatelo, se lo devi fare poi fixa il pc, ansi evita proprio di usare <div> la maggior parte delle volte non funziona e ti sembrerà che quello che fai il programma non lo legge
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+<p style="font-family: Comic Sans MS; color: yellow;"><u><mark style="background-color: lightgreen;">THIS TUTORIAL WAS MADE IN   | 30/08/2026 |</p></u>
 
 -->
