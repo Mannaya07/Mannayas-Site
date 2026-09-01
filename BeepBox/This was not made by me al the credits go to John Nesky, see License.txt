@@ -1,0 +1,53 @@
+IF I MADE ANY MISTAKE ON THE COPYRIGHT PLEASE, CONTACT ME HERE dfranzellosk486@gmail.com, and if you want that i include other thing's that i didn't knew to put in, let me know.
+Same thing if you want that i remove it completely.
+
+
+
+BeepBox
+BeepBox is an online tool for sketching and sharing instrumental music.
+
+All song data is contained in the URL at the top of your browser. When you make changes to the song, the URL is updated to reflect your changes. When you are satisfied with your song, just copy and paste the URL to save and share your song!
+
+BeepBox is a passion project, and will always be free to use. If you find it valuable and have the means, any gratuity via  would be appreciated!
+Instructions
+You can add or remove notes by clicking on the gray rows at the top. BeepBox automatically plays the notes out loud for you. Try it!
+
+Notes go into patterns, and you can edit one pattern at a time. Those numbered boxes at the bottom of the editor are the different patterns you can edit. Click the boxes to move to a different part of the song, or click the arrows on the currently selected box to swap which pattern is played during that part of the song.
+
+BeepBox can play several rows of patterns simultaneously, and each row has its own set of patterns. Most rows can play melodies or harmonies, but the bottom row is for drums.
+
+The purple loop underneath the numbered boxes controls which part of the song is currently repeating. Move the loop to listen to a different part of the song, or drag the ends to expand the loop to include the whole song.
+
+When BeepBox has focus (click on its interface above), you can use these keyboard shortcuts:
+
+Spacebar: play or pause the song
+Shift Spacebar: play from mouse location
+Z: undo, Y or Shift Z: redo
+C/V: copy/paste selected pattern(s)
+0-9: assign pattern number to selection
+Arrows: move selection
+Ctrl + Arrows: rearrange channels
+[ ]: move playhead backward or forward
+F/H: move to First or Highlighted pattern
+Shift & Drag: select part of a pattern
+Check BeepBox's edit menu for more!
+In the note pattern editor, you can click and drag horizontally on a note to adjust its duration. You can also click above or below an existing note to add more notes to be played simultaneously, which is called a chord.
+
+ADVANCED: Drag vertically from an existing note to bend its pitch, or drag vertically from above or below the note to adjust its volume. Drag on the numbered pattern boxes to select multiple patterns to copy and paste parts of your song.
+
+BeepBox has many more features. Try playing with the buttons and menus on the right side to find out what it can do! You can also click on the label next to each option for a description of what it does.
+
+Want to see what people have made with BeepBox? Songs that were shared on Twitter prior to 2023-05-22 can now be browsed in this interactive archive!
+
+About
+BeepBox is developed by John Nesky.
+
+BeepBox does not claim ownership over songs created with it, so original songs belong to their authors.
+
+Neither John Nesky nor BeepBox assume responsibility for any copyrighted material played on BeepBox. No songs are ever received, recorded, or distributed by BeepBox's servers. All song data is contained in the URL after the hash (#) mark, and your song data will not leave your device unless you copy and share the URL. BeepBox does not collect, track, or share any user data.
+
+You can find the release notes for the latest versions of BeepBox here. Those who yearn for simpler times can still use the 2.3 or 3.0.13 versions of BeepBox.
+
+You can download an offline version of BeepBox to use when you don't have access to the internet. The features are otherwise the same.
+
+You can download and use the source code under the MIT license. In particular, you can use the synth code as demonstrated here to play BeepBox songs in your own JavaScript projects!
