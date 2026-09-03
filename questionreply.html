@@ -8,10 +8,44 @@
 	</title>
 
 	<style>
+
 		
 		button:hover {
 			cursor: pointer;
 		}
+
+
+
+
+		@media (max-width: 600px) {
+
+
+			/* Non usare mai i position absolute in questo caso puoi ma nel 99% dei casi si andrà sempre a buggare, quindi non se proprio ma tanto proprio devi usarlo, fai sempre test. */
+
+/* Per non usarlo trova dei metodi, puoi fare questi metodo semplicemnte con html, non trustare fonti che ti dicono altre cose, va bene così */
+
+		.hitoalltext {
+
+			position: absolute;
+
+			left: 1%;
+
+			top: 48%;
+
+		}
+
+		.noquesyet {
+
+			position: absolute;
+
+			left: 1%;
+
+			top: 68%;
+
+		}
+
+	}
+
 
 	</style>
 
@@ -30,7 +64,13 @@
 
 	<td valign="top">
 
-	<h1 style="font-family: Georgia; color: white;"><b>Hi to all, here you will find all my Reply to you'r questions!</b></h1>
+	<h1 class="hitoalltext" style="font-family: Georgia; color: white; border: 5px solid purple; background-color: pink; color: darkmagenta;"><b>Hi to all, here you will find all my Reply to you'r questions!</b></h1>
+
+	<h2 class="noquesyet" style="font-family: Comic Sans MS; color: white; border: 5px solid darkgreen; background-color: lightgreen; color: black;">No question yet! :">
+		<br>
+		<br>
+
+	</h2>
 
 </td>
 
