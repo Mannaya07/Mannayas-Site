@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Laptop Windows XP</title>
+
+    <style>
+
+        button:hover {
+            cursor: pointer;
+        }
+
+/* Questo va a far si che sia tutto un blocco insieme al bg e tutto centrato e con lo sfondo che si adatta di lunghezza automaticamente al testo, oltre ora a mettere anche tute le cose in modo centrale */
+
+        .maremmina {
+
+        	border: 5px solid white;
+        	background-color: #469131;
+        	display: block;
+        	width: fit-content;
+        	margin: 20px auto;
+        	text-align: center;
+        }
+
+
+		.scIn {
+    		display: none;
+    		border: 2px solid black;
+    		background-color: white;
+
+		}
+
+		.scIn.a1 {
+    		display: block;
+		}
+
+        .Title1 {
+            text-align: center;
+        }
+
+        .phototext1 {
+            text-align: center;
+        }
+
+        .de {
+            display: block;
+            text-align: center;
+        }
+
+        /* halleria */
+
+        .qz_gallery_81 {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .qz_gallery_81 img {
+            width: 500px;
+            max-width: 90%;
+            border: 3px solid black;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .qz_gallery_81 img:hover {
+            transform: scale(1.02);
+        }
+
+        /* la box quando apri lo slide delle foto */
+
+        .vx_lightbox_42 {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.88);
+            z-index: 9999;
+
+            justify-content: center;
+            align-items: center;
+        }
+
+        .vx_lightbox_42 img {
+            max-width: 85%;
+            max-height: 85%;
+            object-fit: contain;
+        }
+
+        /* la ixxxe deh */
+
+        .rr_close_73 {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+
+            color: white;
+            font-size: 50px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        /* a fraccie sinistra */
+
+        .aa_prev_19 {
+            position: absolute;
+            left: 25px;
+
+            color: white;
+            font-size: 55px;
+
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* freccia destra */
+
+        .bb_next_64 {
+            position: absolute;
+            right: 25px;
+
+            color: white;
+            font-size: 55px;
+
+            cursor: pointer;
+            user-select: none;
+        }
+
+
+        /* risoluzioni e fix delle robe da mobile */
+
+        @media (max-width: 600px) {
+
+            .qz_gallery_81 img {
+                width: 90%;
+            }
+
+            .aa_prev_19 {
+                left: 10px;
+                font-size: 40px;
+            }
+
+            .bb_next_64 {
+                right: 10px;
+                font-size: 40px;
+            }
+
+            .vx_lightbox_42 img {
+                max-width: 75%;
+                max-height: 75%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body style="background-image: url('../images/background4.png');">
+
+    <a href="Mannayashop.html">
+
+        <br>
+<!-- Questo va a far si che sia tutto un blocco insieme al bg e tutto centrato e con lo sfondo che si adatta di lunghezza automaticamente al testo, oltre ora a mettere anche tute le cose in modo centrale tramites css messo sopra anche ovviamente -->
+        <button
+            style="background-color: maroon; color: yellow; border-radius: 25px; border: 2px solid black;">
+            Back
+        </button>
+
+    </a>
+
+<div class="maremmina" >
+
+    <h1 class="Title1" style="color: white;">
+        Laptop Windows XP
+    </h1>
+
+    <h2 class="Title1" style="color: white;">
+        Avaiable: <a style="color:red" >1</a>
+    </h2>
+
+    <h2 class="phototext1" style="color: white;">
+        All the photos
+    </h2>
+
+
+    <!-- ===== LE TUE FOTO ===== -->
+
+    <div class="qz_gallery_81">
+
+        <img
+            src="ShopImages/PcWinXpP.png"
+            onclick="vxOpen_42(3)"
+            alt="Laptop Windows XP">
+
+    </div>
+
+
+    <br>
+    <br>
+    <br>
+    <br>
+
+
+    <a class="de"
+        href="mailto:dfranzellosk486@gmail.com?subject=Purchase%20Request&body=Hello,%0A%0AI%20am%20interested%20in%20purchasing%20the%20following%20item:%0A%0AItem:%20[Laptop%20Windows%20XP]%0APrice:%20[56€/$]%0A%0APlease%20let%20me%20know%20if%20the%20item%20is%20still%20available%20and%20how%20we%20can%20proceed%20with%20the%20payment%20and%20shipping.%0A%0AThank%20you!">
+
+        <button class="btnBuy">
+            BUY
+        </button>
+
+    </a>
+
+    <br>
+    <br>
+    <br>
+
+<!-- tasto informazioni e tutte le sue cose -->
+
+    <button onclick="ms('pr')" >Info:</button>
+
+<div class="maremms">
+
+    <h2 id="pr" class="scIn" style="color: black; font-family: Comic Sans MS;"> Used = Yes
+    <p>Memory = No Info</p>
+    <p>Working = Yes but the battery is dead</p>
+    <p>Included cable</p>
+    <p>Condition = Good</p>
+
+</h2>
+
+<!-- Fine di: Questo va a far si che sia tutto un blocco insieme al bg e tutto centrato e con lo sfondo che si adatta di lunghezza automaticamente al testo, oltre ora a mettere anche tute le cose in modo centrale tramites css messo sopra anche ovviamente -->
+
+
+<!-- fine del tasto informazioni e tutte le sue cose -->
+
+
+
+</div>
+    <!-- la boxxe che ti viene quando ittù apir l'immagine -->
+
+    <div class="vx_lightbox_42" id="vxBox_42">
+
+        <span class="rr_close_73" onclick="vxClose_42()">
+            &times;
+        </span>
+
+        <span class="aa_prev_19" onclick="vxChange_42(-1)">
+            &#10094;
+        </span>
+
+        <img id="vxMainImage_42" src="" alt="">
+
+        <span class="bb_next_64" onclick="vxChange_42(1)">
+            &#10095;
+        </span>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+
+        /* Elenco delle immagini */
+
+        const vxPhotos_42 = [
+            "ShopImages/dee.png",
+            "ShopImages/20260320_222240.png",
+            "ShopImages/20260227_173527.png",
+            "ShopImages/PcWinXpP.png"
+        ];
+
+        let vxCurrent_42 = 0;
+
+
+        /* per arprie le foto*/
+
+        function vxOpen_42(numero) {
+
+            vxCurrent_42 = numero;
+
+            document.getElementById("vxMainImage_42").src =
+                vxPhotos_42[vxCurrent_42];
+
+            document.getElementById("vxBox_42").style.display = "flex";
+        }
+
+
+        /* questro semplicemnte per chiduerle */
+
+        function vxClose_42() {
+
+            document.getElementById("vxBox_42").style.display = "none";
+        }
+
+
+        /* con codesto cambi fotoO */
+
+        function vxChange_42(direzione) {
+
+            vxCurrent_42 += direzione;
+
+
+            /* Se arrivi alla fine torna alla prima */
+
+            if (vxCurrent_42 >= vxPhotos_42.length) {
+                vxCurrent_42 = 0;
+            }
+
+
+            /* Se vai indietro dalla prima vai all'ultima */
+
+            if (vxCurrent_42 < 0) {
+                vxCurrent_42 = vxPhotos_42.length - 1;
+            }
+
+
+            document.getElementById("vxMainImage_42").src =
+                vxPhotos_42[vxCurrent_42];
+        }
+
+
+        /* Chiudi cliccando sullo sfondo */
+
+        document.getElementById("vxBox_42").addEventListener("click", function(event) {
+
+            if (event.target === this) {
+                vxClose_42();
+            }
+
+        });
+
+
+        /* Frecce della tastiera */
+
+        document.addEventListener("keydown", function(event) {
+
+            if (document.getElementById("vxBox_42").style.display === "flex") {
+
+                if (event.key === "ArrowRight") {
+                    vxChange_42(1);
+                }
+
+                if (event.key === "ArrowLeft") {
+                    vxChange_42(-1);
+                }
+
+                if (event.key === "Escape") {
+                    vxClose_42();
+                }
+
+            }
+
+        });
+
+
+function ms(n) {
+
+    const elemento = document.getElementById(n);
+
+    elemento.classList.toggle('a1');
+}
+
+    </script>
+
+</body>
+</html>

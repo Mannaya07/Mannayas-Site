@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title> Mannaya's Shop </title>
+</head>
+
+
+	<style>
+
+
+		.shopmannaya {
+
+			text-align: center;
+		}
+
+		a {
+    	text-decoration: none;
+    	color: inherit;
+		}
+
+
+		.top-buttons {
+
+    		display: flex;
+
+    		justify-content: space-between;
+
+    		align-items: center;
+
+    		padding: 10px;
+		}
+
+
+
+
+		button:hover {
+
+			cursor: pointer;
+		}
+
+
+		.maremmass {
+
+			font-size: clamp(1.2rem, 5vw, 1.2rem)
+		}
+
+
+		.sezioni {
+			display: inline-block;
+			text-align: left;
+			background-color: white;
+			border: 5px solid black;
+		}
+
+		.sezioni2 {
+			display: inline-block;
+			text-align: left;
+			background-color: white;
+			border: 2px solid black;
+		}
+
+
+		.robacceacaso {
+
+			display: inline-block;
+			text-align: left;
+			background-color: white;
+			border: 5px solid black;
+
+		}
+
+		.btnSection {
+
+			text-align: center;
+		}
+
+		.PcWinXpP {
+
+			position: relative;	/* RICORDATI SEMPRE DI METTERE LE COSE CHE NON C'ÈNTRANO NULLA CON QUESTO BLOCCO DA ALTRE PARTI, SENNò LE ALTRE COE SI ABASERANNO SU QUESTO Qui abbiamo messo un position relative che fa si che dopo non possiamo utilizzare btnBuy text align center per mettere il bottono esattamente sotto l'immagine */
+
+			width: 22vw;
+			height: 36vh;
+		}
+
+		.PcWinXpPBOX {
+
+			display: inline-block;
+			border: 5px solid black;
+			background-color: grey;
+		}
+
+
+		.btnBuy {
+
+			text-align: center;	/* Questo è quello a cui si collega prima, lui si mette nel centro, rispetto a PcWinXpP quindi esattemente nel centro di quell'immagine. */
+		}
+
+		.PcWinXpPBOX {
+
+			position: relative;
+
+		}
+
+		.Ac {
+
+			font-size: clamp(1.2rem, 5vw, 2rem);/* Praticamente il primo è grandezza minima 2 testo fluido e 3 testo massimo,  In pratica: rem dà un'ancora stabile e accessibile, vw dà la fluidità, e clamp() li unisce in un'unica regola senza media query */
+
+			text-align: right; 
+		}
+
+
+/* Fix dimension e posizione per dispositivi mobili */
+
+
+
+		@media (max-width: 600px) {
+
+			.maremmass {
+
+    		width: auto; /* Or set a max-width */
+
+    		font-size: 1.05rem;
+
+    		padding: 0.55rem 1.2rem;
+		}
+
+		.PcWinXpP {
+
+			position: relative;	/* Qui abbiamo messo un position relative che fa si che dopo non possiamo utilizzare btnBuy text align center per mettere il bottono esattamente sotto l'immagine */
+
+			width: 77.2vw;
+			height: 36vh;
+		}
+
+		}
+
+/*/////////////////////////////////////////////////////////// 
+Fix da tablet o schermi medi 
+////////////////////////////////////////////////////////////////*/
+
+		@media (min-width: 601px) and (max-width: 1300px) {
+
+
+
+			.PcWinXpP {
+
+			position: relative;	/* Qui abbiamo messo un position relative che fa si che dopo non possiamo utilizzare btnBuy text align center per mettere il bottono esattamente sotto l'immagine */
+
+			width: 59vw;
+			height: 36vh;
+		}
+
+}
+
+	</style>
+
+<!--
+///////////////////////////////////////////////////////////////////////////
+ FINE DELLO STYLE 
+/////////////////////////////////////////////////////////////////////////-->
+
+
+
+<body style="background-image: url('../images/background5.png');">
+
+<div style="border: 5px solid black; background-image: url(ShopImages/legno_1920x1080.svg);" >
+
+
+<!-- Per farlo nuvamente altre volte cerca di copia il più possibile da quapp -->
+
+<div class="top-buttons">
+
+    <a href="../AboutMe.html">
+
+        <button class="maremmass"
+                style="background-color: maroon; color: yellow; border-radius: 25px; border: 2px solid black;">
+            Back
+        </button>
+
+    </a>
+    <a href="occasionalselleinfo.html">
+    <button class="btnOS">
+        Occasional Seller Info
+    </button>
+</a>
+</div>
+
+<!-- fine di dove devi copiare Per farlo nuvamente altre volte -->
+
+	<h1 class="shopmannaya" style="font-family: Comic Sans MS; color: white;">Mannaya's Shop</h1>
+
+	<br>
+	<br>
+	<br>
+	<br>
+
+</div>
+
+<h2 class="sezioni" > Sections </h2>
+<br> 
+<br>
+<div style="border: 5px solid #3f3a4c; background-color: #6e4791 ; color: #d919ea;" >
+
+	<div class="btnSection" >
+	<br>
+		<button>Technology</button>
+
+		 <button>Home & Living</button>
+
+		  <button>Clothing</button>
+
+		   <button>Accessories</button>
+
+		    <button>Books & Media</button>
+
+		     <button>Gaming</button>
+
+		      <button>Computers & Tech</button>
+
+		       <button>Photography</button>
+
+		        <button>Music</button>
+
+		         <button>Art & Prints</button>
+
+		          <button>Collectibles</button>
+
+		           <button>Tools & Equipment</button>
+
+		            <button>Sports & Outdoors</button>
+
+		             <button>Toys & Games</button>
+
+		              <button>Kitchen</button>
+
+		               <button>Furniture</button>
+
+		                <button>Stationery</button>
+
+		              <br>
+		              <br>
+</div>
+</div>
+
+<p class="sezioni2">"none all section will work, only the one there is something in there"</p>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<h1 class="robacceacaso" >All the object avaible that i am selling</h1>
+
+<br>
+
+<a href="LaptopWindowsXP1.html">
+
+<div class="PcWinXpPBOX">
+
+	<h3>Laptop Windows XP:  <b style="color: green;" ><mark>56€/$</mark></b></h3>
+
+<img class="PcWinXpP" src="ShopImages/PcWinXpP.png">
+
+<br>
+
+<h3 class="btnBuy"><button style="border-radius: 30px; background: lightgreen;">Buy/See info</button></a></h3>
+
+</div>
+
+
+</body>
+</html>
