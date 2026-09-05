@@ -133,12 +133,12 @@
 
 
     <h1 style="font-family: Georgia; color: white;">⚠️New added things⚠️</h1>
-    <h1 class="maremma" style="font-family: Georgia; color: white;">last update | 04/09/2026/20:37 ⌚ |</h1>
+    <h1 class="maremma" style="font-family: Georgia; color: white;">last update | 05/09/2026/16:29 ⌚ |</h1>
 
     <!-- sezione dei bottoni novità aggiiunte -->
 
 
-    <p> <a href="tutorials/Tutorial6HowtodoallCapsletterinyouPC.html"><button style="background-color: #2b2b2a; color: #25f795; border-radius: 30px;">6. How to Type All Caps Keys on Your PC</button> <a href="ShopSection/Mannayashop.html"><button style="background-color: brown; color: black; border-radius: 30px;">Mannaya's Shop</button> <a href="tutorials/Tutorial5HowToDoAScreenShowInWindowsAndMac.html"><button class="dedd" style="background-color: #c804ef; color: #0f0a09; font-family: Tahoma; border-radius: 30px; border: 2px solid #212026;">5. How to do a Screenshot in Windows and Mac</button></a> <a href="Musics.html" style="color: white;"><button>Mannaya/Pato - Suffet | MP3</button></a> <a href="tutorials/Tutorial4HowToCreateMusicOnline.html"><button style="background-color: #10ff00; color: black; font-family: Courier New; border-radius: 30px;">4.How to create music online</button></a> <a href="tutorials/Tutorial3howtoinstallsteaminyourpc.html"> <button class="btnTutorial3" style="background-color: blue; color: white; border-radius: 30px;"> 3. How to install Steam on your Windows PC </button> </a> <a href="tutorials/Tutorials2comecreaunapastacomeunitaliano.html"><button style="background-color: yellow; color: black; border-radius: 30px;">2. How to make Pasta like a real Italian</button> </a> <a href="tutorials/Tutorial1CapsÈ.html"><button style="background-color: orange; color: darkcyan; border-radius: 30px;">1. How to type an uppercase "È"</button> </a> </p>
+    <p> <a href="tutorials/Tutorial7HowToSaAnInternatePageOnYourDesktop.html" ><button style="border-radius: 30px;color: #d802c3; background-color: #89bfc4; font-family: Brush Script MT;">7. How to save an Internate page in your Desktop</button></a></a></h1> <a href="tutorials/Tutorial6HowtodoallCapsletterinyouPC.html"><button style="background-color: #2b2b2a; color: #25f795; border-radius: 30px;">6. How to Type All Caps Keys on Your PC</button> <a href="ShopSection/Mannayashop.html"><button style="background-color: brown; color: black; border-radius: 30px;">Mannaya's Shop</button> <a href="tutorials/Tutorial5HowToDoAScreenShowInWindowsAndMac.html"><button class="dedd" style="background-color: #c804ef; color: #0f0a09; font-family: Tahoma; border-radius: 30px; border: 2px solid #212026;">5. How to do a Screenshot in Windows and Mac</button></a> <a href="Musics.html" style="color: white;"><button>Mannaya/Pato - Suffet | MP3</button></a> <a href="tutorials/Tutorial4HowToCreateMusicOnline.html"><button style="background-color: #10ff00; color: black; font-family: Courier New; border-radius: 30px;">4.How to create music online</button></a> <a href="tutorials/Tutorial3howtoinstallsteaminyourpc.html"> <button class="btnTutorial3" style="background-color: blue; color: white; border-radius: 30px;"> 3. How to install Steam on your Windows PC </button> </a> <a href="tutorials/Tutorials2comecreaunapastacomeunitaliano.html"><button style="background-color: yellow; color: black; border-radius: 30px;">2. How to make Pasta like a real Italian</button> </a> <a href="tutorials/Tutorial1CapsÈ.html"><button style="background-color: orange; color: darkcyan; border-radius: 30px;">1. How to type an uppercase "È"</button> </a> </p>
 
 
 <!-- Fine sezioni bottoni novità aggiunte -->
@@ -832,7 +832,7 @@ FINE DI COME FARE UN TESTO RESPONSIVE BENE METODO 2 MI SEMBRA HEHE
 
 ///////////////////////////////////////////////////////////////////////////////
 COME FARE PIU FIX DI DIMENSIONI E POSIZIONI PER PIù DISPOSITIVI
-
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 PER FARE FIX DI DIMENSIONI E POSIZIONI PER PIù DISPOSITIVI DOPO AVER FATTO PER ESEMPIO IL TELEFONO CIOè COSì
 
@@ -866,5 +866,88 @@ CIOÈ METTERE IL MINIMO E IL MASSIMO
 
 }
 
+///////////////////////////////////////////////////////////////////////////////
+FINE DI COME FARE PIU FIX DI DIMENSIONI E POSIZIONI PER PIù DISPOSITIVI
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Come fare una lighbox / Come far si che una volta premuto un immagine su html ti si apra in modo piu grande
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title> How to Save an Internet Page to Your Desktop </title>
+
+
+<style>
+        
+        button:hover {
+
+            cursor: pointer;
+        }
+
+
+<style>
+
+
+        #lightbox {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 9999;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+            #lightbox img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+            .zoom { cursor: zoom-in; }
+
+
+
+
+</style>
+
+
+<img src="../images/tutorial7.png" class="zoom" onclick="apriLightbox(this.src)" width="900px" style="border: 5px solid white;">
+
+
+<div id="lightbox" onclick="this.style.display='none'">
+  <img src="" alt="">
+</div>
+
+
+
+
+<script>
+
+function apriLightbox(src) {
+  var lb = document.getElementById('lightbox');
+  lb.querySelector('img').src = src;
+  lb.style.display = 'block';
+}
+
+</script>
+
+</head>
+</body>
+</html>
+
+OVVIAMENTE HO INCOLALTO COME PRATICAMENTE CREARE ANCHE UNA PAGINA DOVE METTERE LA LIGHTBOX PERÓ C'È ANCHE COME FARE TUTTA LA  LIGHTBOX
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Fine di come fare una lighbox / Come far si che una volta premuto un immagine su html ti si apra in modo piu grande
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+</script>
 
 -->
