@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title> 8. How to Install a new Operating System </title>
+
+
+	<style>
+		
+		button:hover {
+
+			cursor: pointer;
+		}
+
+		.img1tut8 {	/* To do this, always put an opening div before the image and a closing one after it */
+
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+		}
+
+
+		#lightbox {
+
+  			display: none;
+
+  			position: fixed;
+
+  			top: 0; left: 0;
+
+  			width: 100%; height: 100%;
+
+  			background: rgba(0,0,0,0.9);
+
+  			z-index: 9999;
+
+  			text-align: center;
+
+  			padding: 20px;
+
+  			box-sizing: border-box;
+
+		}
+			#lightbox img {
+
+  			max-width: 100%;
+
+  			max-height: 100%;
+
+		}
+			.zoom { cursor: zoom-in; }
+
+
+		@media (max-width: 600px) {
+
+
+				.copyright1 {
+
+				font-size: px;
+
+			}
+
+
+			.textwasmade1 {
+
+				font-size: 11.7px ;
+
+
+			}
+
+			.img1tut8a3 {
+
+				width: 87.9vw;
+			}
+
+			.img1tut8a2 {
+
+				width: 87.9vw;
+			}
+
+			.img1tut8a1 {
+
+				width: 87.9vw;
+			}
+
+		}
+
+
+	</style>
+
+
+</head>
+
+
+<body style="background-image: url('../images/background1.png');">
+
+<a href="../tutorials.html"> <button style="border-radius: 30px; background-color: grey; color: yellow;">Back</button> </a>
+
+<p style="color: white; font-family: Brush Script MT; "><a class="copyright1">⚠️ Copyright Disclaimer ⚠️: All original content posted here and on my other pages is copyrighted by me. Third-party software and materials remain the property of their respective authors.</a></p>
+
+<p style="font-family: Brush Script MT; color: #a8ea2e;"><u><a class="textwasmade1" style="border: 2px solid #234226; background-color: #211d1d;"> THIS TUTORIAL WAS MADE ON  | 07/09/2026 |</a></u></p>
+
+<div style="border: 5px solid #231d08; background-color: #170f3a;" >
+
+<h1 style="font-family: Tahoma; color: #eccbed;" >Hellow all!</h1>
+
+<br>
+
+<h1 style="font-family: Tahoma; color: #eccbed;" >Welcome to this new Tutorial.
+
+<p>In this tutorial, I will guide you through the process of installing a new Operating System on your PC. The only things you need to follow this tutorial are a USB drive with at least 10–15 GB of storage, an ISO file, and some patience :></p>
+
+<p>With that said, let's begin with our tutorial.</p></h1>
+
+</div>
+
+<br>
+<br>
+
+<div style="border: 5px solid #4b895e; background-color: #1d5e5b; ">
+
+<h1 style="font-family: Tahoma; color: #000000;">Downloading the ISO File</h1>
+
+<br>
+<br>
+
+<h2 style="font-family: Tahoma; color: #000000;" > The first thing we are going to do is download the ISO file of the Operating System we want to install. For example, if we want to install Linux Mint, we can search for "Linux Mint Download", and you should be able to find the official Linux Mint download page. Once you have decided which mirror you want to use, download the ISO file. You should see that the file has an .iso extension. I used Linux Mint as an example, but you can download pretty much any Operating System you want. The procedure will usually be very similar.
+
+	<p>So, if the file you downloaded is an .iso file, we are good to go and can proceed with our tutorial.</p></h2>
+
+</div>
+
+<br>
+<br>
+
+<div style="border: 5px solid #473722; background-color: #382a2d;">
+
+	<h1 style="font-family: Tahoma; color: #1a8284;">Downloading Rufus</h1>
+
+		<h2 style="font-family: Tahoma; color: #1a8284;" ><p>After that, you need to download Rufus. You can search for it in your browser, or you can simply use the link below. This will take you directly to the official Rufus website.</p></h2>
+
+		<br>
+
+		<br>
+		<br>
+
+		<a href="https://rufus.ie"  target="_blank"><button style="border-radius: 30px; background-color: #1a8284; color: #382a2d;">Rufus</button></a>
+		<br>
+		<br>
+</div>
+		<br>
+		<br>
+		<br>
+
+<div style="border: 5px solid #28af94;  background-color: #428777;">
+
+		<h1 style="font-family: Tahoma; color: #3f1daf;">Using Rufus</h1>
+
+		<br>
+		<br>
+
+
+	<h2 style="font-family: Tahoma; color: #3f1daf;" >Once you are on the Rufus website, download the version that is appropriate for your PC. If you are using a 64-bit Windows PC, you can normally choose between the Standard version and the Portable version. The Portable version does not require a traditional installation. If you are using 32-bit Windows, download the x86 32-bit version. </h2>
+
+
+	<h2 style="font-family: Tahoma; color: #3f1daf;">Once you have downloaded Rufus, open it, and on the Device/Unit, select your USB.</h2>
+
+
+		<h1 style="font-family: Tahoma; color: #3f1daf;">⚠️ IMPORTANT: Make sure you select the correct USB drive, because Rufus will erase the data on it when creating the bootable USB.⚠️</h1>
+
+		<h2 style="font-family: Tahoma; color: #3f1daf;" ><p>Once you have selected your USB drive, on Boot Type System, click on Select:</p></h2>
+
+		<img class="img1tut8a1" src="../images/rufussess.png" class="zoom" onclick="apriLightbox(this.src)" width="500px" style="border: 5px solid white">
+
+		<div id="lightbox" onclick="this.style.display='none'">
+			<img src="" alt="">
+		</div>
+
+
+<h2 style="font-family: Tahoma; color: #3f1daf;"> Choose the .iso file you downloaded earlier.
+	<p>Once you have selected the ISO file, click Start, and don't remove your USB until it finished.</p></h2>
+
+</div>
+
+	<br>
+	<br>
+
+	<div style="border: 5px solid #8d84a3; background-color: #a3447a;">
+
+	<h1 style="font-family: Tahoma; color: #070300;">Booting from the USB</h1>
+
+	<br>
+	<br>
+
+	<h2 style="font-family: Tahoma; color: #070300;"><p>Once Rufus has finished, safely remove the USB drive and plug it into the PC where you want to install the Operating System.</p>
+
+	<p>Turn the PC off and then turn it back on. Now, you need to access the PC's BIOS/UEFI settings or, depending on your PC, the Boot Menu.</p>
+
+	<p>The key you need to press depends on the manufacturer and the specific PC or motherboard. Common keys include F2, Delete, F10, F11, F12, or Esc. Try pressing the appropriate key repeatedly immediately after turning on the PC. If it doesn't work the first time, don't worry you may simply need to try another key.</p>
+	<p>If you manage to enter the BIOS/UEFI, you now have to configure the PC to boot from your USB drive.</p>
+	<p>The BIOS/UEFI interface can look different from one PC to another, but the step to do is usually the same. </p>
+	<p> Look for a section called Boot, Boot Order, or something similar, you need to move your USB drive to the top of the boot order.</p></h2>
+
+		<img class="img1tut8a2" src="../images/BiosBoot.png" class="zoom" onclick="apriLightbox(this.src)" width="500px" style="border: 5px solid white">
+
+		<div id="lightbox" onclick="this.style.display='none'">
+			<img src="" alt="">
+		</div>
+
+		<br>
+		<br>
+
+<h2 style="font-family: Tahoma; color: #070300;">Alternatively, some PCs allow you to use a Boot Menu and simply select the USB drive for this one boot. This is often easier because you don't have to permanently change the boot order.</h2>
+
+</div>
+
+<br>
+<br>
+
+<div style="border: 5px solid #14ad00; background-color: #1a2615;">
+
+<h1 style="font-family: Tahoma; color: #d8ffc4;" > Saving the Changes </h1>
+
+	<br>
+	<br>
+
+<h2 style="font-family: Tahoma; color: #d8ffc4;"> If you changed the boot order in the BIOS/UEFI, look for an option such as Exit Saving Changes, Save Changes and Exit, or something similar.
+
+	<p>Select it and confirm. Your PC should restart and, if everything went correctly, it should boot from the USB drive and start the Operating System installer. From there, simply follow the installation instructions provided by the Operating System.</p></h2>
+
+
+<br>
+
+		<img class="img1tut8a3" src="../images/BiosExit.png" class="zoom" onclick="apriLightbox(this.src)" width="500px" style="border: 5px solid white">
+
+		<div id="lightbox" onclick="this.style.display='none'">
+			<img src="" alt="">
+		</div>
+
+</div>
+
+
+
+		<br>
+		<br>
+
+<div style="border: 5px solid #7f69ea; background-color: #5e9654;">
+
+		<h1 style="font-family: Tahoma; color: #cbede7;">If the USB doesn't boot</h1>
+
+
+
+		<br>
+		<br>
+
+		<h2 style="font-family: Tahoma; color: #cbede7;"><p>If it doesn't work, in some Operating Systems may require specific BIOS/UEFI settings. In some cases, Secure Boot may need to be disabled. You may also encounter a Fast Boot option in the BIOS/UEFI. On some systems, disabling it can make it easier to access the BIOS/UEFI or detect external devices during startup and can even fix the problem, so you can try it.</p></h2>
+
+		<h2 style="font-family: Tahoma; color: #cbede7;">Once you done that it should start and you will be able to do the installation of your Operating System</h2>
+
+
+		<h1 style="font-family: Tahoma; color: #cbede7;" > If you are having trouble downloading your Operating System, try looking for a guide online or, even better, check the official website of the Operating System you are trying to install. There are many different Operating Systems, and although the general installation process is often similar, some steps can be different.</h1>
+
+</div>
+
+		<br>
+		<br>
+
+<div style="border: 5px solid #65bc8e; background-color: #160516;" >
+
+		<h1 style="font-family: Tahoma; color: #b3b3d6;">With that said, I hope this tutorial helped you do what you wanted to do, and I hope you have a great day! See you in the next tutorial! :></h1>
+
+</div>
+
+<script>
+
+function apriLightbox(src) {
+  var lb = document.getElementById('lightbox');
+  lb.querySelector('img').src = src;
+  lb.style.display = 'block';
+}
+
+</script>
+
+
+
+</body>
+</html>
